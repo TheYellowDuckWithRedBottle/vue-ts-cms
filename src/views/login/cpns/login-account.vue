@@ -14,6 +14,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 import { ElForm } from 'element-plus'
+import axios from 'axios'
 
 import { rules } from '../config/account-config'
 
@@ -29,7 +30,16 @@ export default defineComponent({
     const loginAction = () => {
       formRef.value?.validate((valid) => {
         if (valid) {
-          console.log('真正执行登录逻辑')
+          axios
+            .get('/api/login', {
+              params: account
+            })
+            .then(() => {
+              location.href = '/'
+            })
+            .catch(() => {
+              formRef.value?.clearValidate()
+            })
         }
       })
     }
