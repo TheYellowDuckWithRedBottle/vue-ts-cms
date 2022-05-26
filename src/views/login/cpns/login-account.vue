@@ -34,8 +34,8 @@ export default defineComponent({
             .get('/api/login', {
               params: account
             })
-            .then(() => {
-              location.href = '/'
+            .then((res) => {
+              console.log(res)
             })
             .catch(() => {
               formRef.value?.clearValidate()
