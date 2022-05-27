@@ -5,7 +5,7 @@
         <el-input v-model="account.name" />
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="account.password" />
+        <el-input v-model="account.password" show-password />
       </el-form-item>
     </el-form>
   </div>
@@ -27,19 +27,14 @@ export default defineComponent({
 
     const formRef = ref<InstanceType<typeof ElForm>>()
 
-    const loginAction = () => {
+    const loginAction = (isKeepPassword: boolean) => {
       formRef.value?.validate((valid) => {
         if (valid) {
-          axios
-            .get('/api/login', {
-              params: account
-            })
-            .then((res) => {
-              console.log(res)
-            })
-            .catch(() => {
-              formRef.value?.clearValidate()
-            })
+          if (isKeepPassword) {
+            //本地缓存
+          } else {
+            //不记住密码
+          }
         }
       })
     }
