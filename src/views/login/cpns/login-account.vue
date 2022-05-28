@@ -14,15 +14,16 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 import { ElForm } from 'element-plus'
-import axios from 'axios'
-
+import localStorage from '@/utility/Cache'
+import { useStore } from 'vuex'
 import { rules } from '../config/account-config'
 
 export default defineComponent({
   setup() {
+    const store = useStore()
     const account = reactive({
-      name: '',
-      password: ''
+      name: localStorage.getCache('name') ?? '',
+      password: localStorage.getCache('password') ?? ''
     })
 
     const formRef = ref<InstanceType<typeof ElForm>>()
@@ -32,9 +33,13 @@ export default defineComponent({
         if (valid) {
           if (isKeepPassword) {
             //本地缓存
+            localStorage.setCache('name', account.name)
+            localStorage.setCache('password', account.password)
           } else {
             //不记住密码
+            localStorage.removeCache('name')
           }
+          store.dispatch('login/accountLoginAction', { ...account })
         }
       })
     }
