@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { Instance } from '_@popperjs_core@2.11.5@@popperjs/core'
+
 import LoginAccount from './login-account.vue'
 import LoginPhone from './login-phone.vue'
 
