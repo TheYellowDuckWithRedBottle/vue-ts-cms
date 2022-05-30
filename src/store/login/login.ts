@@ -1,6 +1,7 @@
 import { Module } from 'vuex'
 import IRootState from '../types'
-import { LoginAction } from '@/service/login/login'
+import { LoginAction, getUserInfo, getUserMenu } from '@/service/login/login'
+import cache from '@/utility/Cache'
 interface ILoginState {
   token: string
   userInfo: any
@@ -21,11 +22,16 @@ const loginModule: Module<ILoginState, IRootState> = {
   },
   actions: {
     async accountLoginAction({ commit }, payload: any) {
-      console.log(process.env.VUE_APP_BASE_URL)
       const loginResponse = await LoginAction(payload)
       const { id, name, token } = loginResponse.data
-      console.log(id, name, token)
+      cache.setCache('token', token)
       commit('changeToken', token)
+
+      const userInfoResponse = await getUserInfo(id)
+      console.log(userInfoResponse)
+
+      const userMenu = await getUserMenu(id)
+      console.log(userMenu)
     },
     phoneLoginAction({ commit }, payload: any) {
       console.log('手机登录')
