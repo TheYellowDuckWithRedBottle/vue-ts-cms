@@ -21,3 +21,13 @@ export function getUserMenu(id: string) {
     url: `${BASE_URL}/menu${id ? `/${id}` : ''}`
   })
 }
+
+export function LoginByPhone(phone: string, code: string) {
+  return hyRequest.post<IDataType<ILoginResult>>({
+    url: `${BASE_URL}/login/phone`,
+    data: {
+      phone,
+      code
+    }
+  })
+}
