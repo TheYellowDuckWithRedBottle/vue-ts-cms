@@ -49,6 +49,7 @@ export default defineComponent({
         accountRef.value?.loginAction(isKeepPassword.value)
       } else {
         console.log('手机登陆')
+        phoneRef.value?.loginAction()
       }
     }
 
