@@ -14,7 +14,10 @@ import {
   ElHeader,
   ElAside,
   ElMain,
-  ElFooter
+  ElFooter,
+  ElMenu,
+  ElMenuItem,
+  ElMenuItemGroup
 } from 'element-plus'
 
 const components = [
@@ -31,7 +34,10 @@ const components = [
   ElHeader,
   ElAside,
   ElMain,
-  ElFooter
+  ElFooter,
+  ElMenu,
+  ElMenuItem,
+  ElMenuItemGroup
 ]
 
 export default function (app: App): void {

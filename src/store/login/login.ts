@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import IRootState from '../types'
+import { IRootState } from '../types'
 import { LoginAction, getUserInfo, getUserMenu } from '@/service/login/login'
 import cache from '@/utility/Cache'
 import router from '@/router'
