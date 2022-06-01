@@ -1,7 +1,9 @@
 <template>
   <div class="common-layout">
-    <el-container>
-      <el-aside class="el-side">Aside</el-aside>
+    <el-container class="layout-container">
+      <el-aside class="el-side">
+        <nav-menu />
+      </el-aside>
       <el-container class="el-right-side">
         <el-header class="el-header">Header</el-header>
         <el-main class="el-main">Main</el-main>
@@ -13,8 +15,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import NavMenu from '@/components/navMenu/navMenu.vue'
 
 export default defineComponent({
+  components: {
+    NavMenu
+  },
   setup() {
     return {}
   }
@@ -25,6 +31,9 @@ export default defineComponent({
 .common-layout {
   height: 100%;
   width: 100%;
+  .layout-container {
+    height: 100%;
+  }
 }
 .el-right-side {
   height: 100%;
@@ -32,7 +41,7 @@ export default defineComponent({
 .el-side {
   width: 200px;
   height: 100%;
-  background: black;
+  background: #00a1d6;
 }
 .el-header {
   height: 10%;
