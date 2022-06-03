@@ -17,6 +17,7 @@ import {
   ElFooter,
   ElMenu,
   ElMenuItem,
+  ElSubmenu,
   ElMenuItemGroup
 } from 'element-plus'
 
@@ -33,10 +34,12 @@ const components = [
   ElContainer,
   ElHeader,
   ElAside,
+  ElAside,
   ElMain,
   ElFooter,
   ElMenu,
   ElMenuItem,
+  ElSubmenu,
   ElMenuItemGroup
 ]
 

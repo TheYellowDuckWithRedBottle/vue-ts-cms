@@ -14,7 +14,7 @@ const loginModule: Module<ILoginState, IRootState> = {
     return {
       token: '',
       userInfo: {},
-      userMenu: {}
+      userMenu: []
     }
   },
   getters: {},
@@ -38,18 +38,32 @@ const loginModule: Module<ILoginState, IRootState> = {
 
       const userInfoResponse = await getUserInfo(id)
       console.log(userInfoResponse)
-      commit('changeUserInfo', userInfoResponse)
-      cache.setCache('userInfo', userInfoResponse)
+      commit('changeUserInfo', userInfoResponse.data)
+      cache.setCache('userInfo', userInfoResponse.data)
 
       const userMenu = await getUserMenu(id)
-      commit('changeUserMenu', userMenu)
-      cache.setCache('userMenu', userMenu)
-      console.log(userMenu)
+      commit('changeUserMenu', userMenu.data)
+      console.log('我是', userMenu)
+      cache.setCache('userMenu', userMenu.data)
 
       router.push('/main')
     },
     phoneLoginAction({ commit }, payload: any) {
       console.log('手机登录')
+    },
+    loadLocalLogin({ commit }) {
+      const token = cache.getCache('token')
+      if (token) {
+        commit('changeToken', token)
+      }
+      const userInfo = cache.getCache('userInfo')
+      if (userInfo) {
+        commit('changeUserInfo', userInfo)
+      }
+      const userMenu = cache.getCache('userMenus')
+      if (userMenu) {
+        commit('changeUserMenus', userMenu)
+      }
     }
   }
 }

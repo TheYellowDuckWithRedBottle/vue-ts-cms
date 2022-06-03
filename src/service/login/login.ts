@@ -18,7 +18,7 @@ export function getUserInfo(id: string) {
 
 export function getUserMenu(id: string) {
   return hyRequest.get<IDataType<any>>({
-    url: `${BASE_URL}/menu${id ? `/${id}` : ''}`
+    url: `${BASE_URL}/role${id ? `/${id}` : ''}/menu`
   })
 }
 
