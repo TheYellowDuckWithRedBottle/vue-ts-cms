@@ -3,7 +3,7 @@ import login from './login/login'
 
 import { IRootState, IStoreType } from './types'
 const store = createStore<IRootState>({
-  state: () => {
+  state() {
     return {
       name: 'coderwhy',
       age: 18
