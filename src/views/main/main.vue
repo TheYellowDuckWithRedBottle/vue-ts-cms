@@ -5,7 +5,9 @@
         <nav-menu />
       </el-aside>
       <el-container class="el-right-side">
-        <el-header class="el-header">Header</el-header>
+        <el-header class="el-header">
+          <nav-header />
+        </el-header>
         <el-main class="el-main">Main</el-main>
         <el-footer class="el-footer">Footer</el-footer>
       </el-container>
@@ -16,10 +18,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
+import navHeader from '@/components/navHeader/navHeader.vue'
 
 export default defineComponent({
   components: {
-    NavMenu
+    NavMenu,
+    navHeader
   },
   setup() {
     return {}

@@ -7,26 +7,37 @@
     <div class="nav-content">
       <el-menu
         default-active="2"
-        class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose"
+        class="el-menu-vertical"
+        background-color="#0c2135"
+        unique-opened="false"
+        text-color="#b7bdc3"
+        active-text-color="#0a60bd"
       >
         <template v-for="item in userMenu" :key="item.id">
-          <el-sub-menu :index="item.id + ''">
-            <template #title>
-              <el-icon><location /></el-icon>
+          <!-- 二级菜单 -->
+          <template v-if="item.type === 1">
+            <!-- 二级菜单的可以展开的标题 -->
+            <el-submenu :index="item.id + ''">
+              <template #title>
+                <i v-if="item.icon" :class="item.icon"></i>
+                <span>{{ item.name }}</span>
+              </template>
+              <!-- 遍历里面的item -->
+              <template v-for="subitem in item.children" :key="subitem.id">
+                <el-menu-item :index="subitem.id + ''">
+                  <i v-if="subitem.icon" :class="subitem.icon"></i>
+                  <span>{{ subitem.name }}</span>
+                </el-menu-item>
+              </template>
+            </el-submenu>
+          </template>
+          <!-- 一级菜单 -->
+          <template v-else-if="item.type === 2">
+            <el-menu-item :index="item.id + ''">
+              <i v-if="item.icon" :class="item.icon"></i>
               <span>{{ item.name }}</span>
-            </template>
-            <el-menu-item-group>
-              <div v-if="item.children">
-                <template v-for="child in item.children" :key="child.id">
-                  <el-menu-item index="1-1">
-                    <span>{{ child.name }}</span>
-                  </el-menu-item>
-                </template>
-              </div>
-            </el-menu-item-group>
-          </el-sub-menu>
+            </el-menu-item>
+          </template>
         </template>
       </el-menu>
     </div>
@@ -37,10 +48,12 @@
 import { defineComponent, computed } from 'vue'
 import { userStore } from '@/store/index'
 import Cache from '@/utility/Cache'
+import { IRootState } from '@/store/types'
 
 export default defineComponent({
   setup() {
-    const store = userStore()
+    // const store = userStore<IRootState>()
+    // store.state.login
     const userMenu = Cache.getCache('userMenu')
     console.log(userMenu)
     const handleOpen = () => {
