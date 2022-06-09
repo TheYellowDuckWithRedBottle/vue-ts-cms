@@ -2,10 +2,11 @@
   <div class="navMenu-layout">
     <div class="nav-title">
       <img src="~@/assets/img/logo.svg" alt="" />
-      <span>vue3 + ts</span>
+      <span v-if="!collapse">vue3 + ts</span>
     </div>
     <div class="nav-content">
       <el-menu
+        :collapse="collapse"
         default-active="2"
         class="el-menu-vertical"
         background-color="#0c2135"
@@ -51,10 +52,17 @@ import Cache from '@/utility/Cache'
 import { IRootState } from '@/store/types'
 
 export default defineComponent({
+  props: {
+    collapse: {
+      default: true,
+      type: Boolean
+    }
+  },
   setup() {
     // const store = userStore<IRootState>()
     // store.state.login
     const userMenu = Cache.getCache('userMenu')
+    const collapse = false
     console.log(userMenu)
     const handleOpen = () => {
       console.log('open')

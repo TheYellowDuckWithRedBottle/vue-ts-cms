@@ -29,4 +29,7 @@ export default {
 .header-container {
   vertical-align: middle;
 }
+.fold-menu {
+  font-size: 24px;
+}
 </style>

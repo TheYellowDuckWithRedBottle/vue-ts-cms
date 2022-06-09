@@ -2,7 +2,7 @@
   <div class="common-layout">
     <el-container class="layout-container">
       <el-aside class="el-side" :width="isCollapse ? '60px' : '200px'">
-        <nav-menu />
+        <nav-menu :collapse="isCollapse" />
       </el-aside>
       <el-container class="el-right-side">
         <el-header class="el-header">
