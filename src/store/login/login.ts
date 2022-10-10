@@ -1,5 +1,6 @@
 import { Module } from 'vuex'
 import { IRootState } from '../types'
+import { RouteRecordRaw } from 'vue-router'
 import { LoginAction, getUserInfo, getUserMenu } from '@/service/login/login'
 import cache from '@/utility/Cache'
 import router from '@/router'
@@ -27,6 +28,9 @@ const loginModule: Module<ILoginState, IRootState> = {
     },
     changeUserMenu(state, userMenu: any) {
       state.userMenu = userMenu
+
+      const routes: RouteRecordRaw[] = []
+      const path = require.context('@/router/main', true, /\.ts$/)
     }
   },
   actions: {

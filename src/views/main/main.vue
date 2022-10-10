@@ -1,17 +1,10 @@
 <template>
   <div class="common-layout">
-    <el-container class="layout-container">
-      <el-aside class="el-side" :width="isCollapse ? '60px' : '200px'">
-        <nav-menu :collapse="isCollapse" />
-      </el-aside>
-      <el-container class="el-right-side">
-        <el-header class="el-header">
-          <nav-header @changeFolder="changeFolder" />
-        </el-header>
-        <el-main class="el-main">Main</el-main>
-        <el-footer class="el-footer">Footer</el-footer>
-      </el-container>
-    </el-container>
+    <nav-header />
+    <div class="layout-body">
+      <nav-menu />
+      <menuPanel />
+    </div>
   </div>
 </template>
 
@@ -19,11 +12,13 @@
 import { defineComponent, ref } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
+import menuPanel from '@/components/menuPanel/menuPanel.vue'
 
 export default defineComponent({
   components: {
     NavMenu,
-    navHeader
+    navHeader,
+    menuPanel
   },
   setup() {
     let isCollapse = ref(false)
@@ -47,19 +42,9 @@ export default defineComponent({
     height: 100%;
   }
 }
-.el-right-side {
+.layout-body {
   height: 100%;
-}
-.el-side {
-  height: 100%;
-  background: #00a1d6;
-}
-.el-header {
-  height: 6%;
+  width: 100%;
   display: flex;
-  align-items: center;
-}
-.el-main {
-  height: 80%;
 }
 </style>

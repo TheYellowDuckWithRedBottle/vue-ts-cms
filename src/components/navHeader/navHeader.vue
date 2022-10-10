@@ -1,35 +1,98 @@
 <template>
-  <div class="header-container">
-    <i
-      class="fold-menu"
-      :class="isFolder ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-      @click="changeFolder"
-    ></i>
+  <div class="nav-top-bar">
+    <div class="nav-sys">
+      <div class="nav-avatar">
+        <img src="@/assets/img/mlogo.png" alt="" />
+      </div>
+      <div class="nav-title">
+        <strong>标题</strong>
+      </div>
+    </div>
+    <div class="sys-user">
+      <div class="sys-search">
+        <input placeholder="搜索/功能" class="el-input" />
+      </div>
+      <div class="sys-login">
+        <el-icon><Location /></el-icon>
+        <span class="username">{{ username }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-import { defineComponent, reactive, ref } from 'vue'
+<script lang="ts">
+import { User, Location } from '@element-plus/icons-vue'
+import { ref } from 'vue'
 export default {
-  setup(props, { emit }) {
-    let isFolder = ref(false)
-    const changeFolder = (e) => {
-      isFolder.value = !isFolder.value
-      emit('changeFolder', isFolder.value)
-    }
+  components: {
+    Location
+  },
+  setup() {
+    let username = '匿名用户'
+    const input1 = ref('')
     return {
-      isFolder,
-      changeFolder
+      username,
+      input1
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
-.header-container {
-  vertical-align: middle;
+<style scoped>
+.nav-top-bar {
+  box-sizing: border-box;
+  width: 100%;
+  height: 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(66, 133, 244);
+  color: white;
+  padding: 10px;
 }
-.fold-menu {
-  font-size: 24px;
+.nav-sys {
+  display: flex;
+  height: 100%;
+}
+img {
+  height: 100%;
+  width: 100%;
+}
+span {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+.nav-title {
+  height: 100%;
+  font-size: 20px;
+  padding-left: 8px;
+  display: flex;
+  align-items: center;
+}
+.sys-user {
+  display: flex;
+  height: 100%;
+}
+.sys-login {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 8px;
+  font-size: 12px;
+}
+.sys-search {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.el-input {
+  display: block;
+  height: 60%;
+  width: 100%;
+  border: 0px;
+  padding-left: 8px;
+  border-radius: 12px;
+  background: #d9e7fd;
 }
 </style>

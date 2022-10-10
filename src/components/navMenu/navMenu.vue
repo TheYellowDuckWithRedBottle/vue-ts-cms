@@ -1,52 +1,52 @@
 <template>
   <div class="navMenu-layout">
-    <div class="nav-title">
-      <img src="~@/assets/img/logo.svg" alt="" />
-      <span v-if="!collapse">vue3 + ts</span>
-    </div>
     <div class="nav-content">
-      <el-menu
-        :collapse="collapse"
-        default-active="2"
-        class="el-menu-vertical"
-        background-color="#0c2135"
-        unique-opened="false"
-        text-color="#b7bdc3"
-        active-text-color="#0a60bd"
+      <div
+        v-for="(item, index) in userMenu"
+        :key="index"
+        @click="clickMenuItem(item, index)"
+        @mouseenter="hoverMenuItem(item, index)"
+        @mouseleave="leaveMenuItem(item, index)"
       >
-        <template v-for="item in userMenu" :key="item.id">
-          <!-- 二级菜单 -->
-          <template v-if="item.type === 1">
-            <!-- 二级菜单的可以展开的标题 -->
-            <el-submenu :index="item.id + ''">
-              <template #title>
-                <i v-if="item.icon" :class="item.icon"></i>
-                <span>{{ item.name }}</span>
-              </template>
-              <!-- 遍历里面的item -->
-              <template v-for="subitem in item.children" :key="subitem.id">
-                <el-menu-item :index="subitem.id + ''">
-                  <i v-if="subitem.icon" :class="subitem.icon"></i>
-                  <span>{{ subitem.name }}</span>
-                </el-menu-item>
-              </template>
-            </el-submenu>
+        <div class="menu-item" v-if="item.name === 'layerlist'">
+          <img src="@/assets/img/widget-icons/layerlist.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div class="menu-item" v-else-if="item.name === 'videomanager'">
+          <img src="@/assets/img/widget-icons/videomanager.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div class="menu-item" v-else-if="item.name === 'analysis_group'">
+          <img src="@/assets/img/widget-icons/analysis_group.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div class="menu-item" v-else-if="item.name === 'identify'">
+          <img src="@/assets/img/widget-icons/videomanager.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div class="menu-item" v-else-if="item.name === 'query'">
+          <img src="@/assets/img/widget-icons/videomanager.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div class="menu-item" v-else>
+          <img src="@/assets/img/widget-icons/default.png" alt="" />
+          <span class="menu-name">{{ item.title }}</span>
+        </div>
+        <div v-if="item.children && item.children.length > 0 && item.showChild">
+          <template
+            v-for="(child, childIndex) in item.children"
+            :key="childIndex"
+          >
+            <span class="menu-name">{{ child.title }}</span>
           </template>
-          <!-- 一级菜单 -->
-          <template v-else-if="item.type === 2">
-            <el-menu-item :index="item.id + ''">
-              <i v-if="item.icon" :class="item.icon"></i>
-              <span>{{ item.name }}</span>
-            </el-menu-item>
-          </template>
-        </template>
-      </el-menu>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, reactive } from 'vue'
 import { userStore } from '@/store/index'
 import Cache from '@/utility/Cache'
 import { IRootState } from '@/store/types'
@@ -61,8 +61,16 @@ export default defineComponent({
   setup() {
     // const store = userStore<IRootState>()
     // store.state.login
-    const userMenu = Cache.getCache('userMenu')
-    const collapse = false
+    const isCollapse = false
+    let userMenu = Cache.getCache('userMenu')
+    userMenu = reactive([
+      { name: 'layerlist', title: '数据', children: [] },
+      { name: 'videomanager', title: '视频' },
+      { name: 'analysis_group', title: '分析', children: [{ name: 'sdxz' }] },
+      { name: 'identify', title: '属性' },
+      { name: 'query', title: '查询' },
+      { name: 'measure', title: '量测' }
+    ])
     console.log(userMenu)
     const handleOpen = () => {
       console.log('open')
@@ -70,27 +78,63 @@ export default defineComponent({
     const handleClose = () => {
       console.log('open')
     }
+    const hoverMenuItem = (menuItem: any, index: number) => {
+      userMenu[index]['showChild'] = true
+      console.log(menuItem, index)
+    }
+    const leaveMenuItem = (menuItem: any, index: number) => {
+      userMenu[index]['showChild'] = false
+      console.log(menuItem, index)
+    }
+    const clickMenuItem = (menuItem: any, index: number) => {
+      console.log(menuItem)
+      userMenu[index]['showChild'] = true
+    }
     return {
+      isCollapse,
       userMenu,
       handleOpen,
-      handleClose
+      handleClose,
+      hoverMenuItem,
+      leaveMenuItem,
+      clickMenuItem
     }
   }
 })
 </script>
 
-<style scoped lang="less">
+<style scoped>
 .navMenu-layout {
-  padding-top: 10px;
-  height: calc(100% - 10px);
-  .nav-title {
-    height: 5%;
-    display: flex;
-    justify-content: center;
-  }
-  img {
-    height: 24px;
-    width: 24px;
-  }
+  height: calc(93% - 10px);
+}
+.nav-content {
+  height: 100%;
+  width: 50px;
+  background: #d9e7fd;
+  padding-top: 8px;
+}
+.menu-item {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  padding: 2px 0px;
+  border-bottom: 1px solid white;
+  cursor: pointer;
+}
+.menu-item:hover {
+  background: rgb(66, 133, 244);
+  color: white;
+}
+img {
+  width: 30px;
+  display: block;
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  background: white;
 }
 </style>
