@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
 import menuPanel from '@/components/menuPanel/menuPanel.vue'
@@ -21,7 +21,15 @@ export default defineComponent({
     menuPanel
   },
   setup() {
-    return {}
+    let isCollapse = ref(false)
+    const changeFolder = (isFolder: boolean) => {
+      console.log(isFolder)
+      isCollapse.value = isFolder
+    }
+    return {
+      changeFolder,
+      isCollapse
+    }
   }
 })
 </script>

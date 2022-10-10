@@ -52,6 +52,12 @@ import Cache from '@/utility/Cache'
 import { IRootState } from '@/store/types'
 
 export default defineComponent({
+  props: {
+    collapse: {
+      default: true,
+      type: Boolean
+    }
+  },
   setup() {
     // const store = userStore<IRootState>()
     // store.state.login
