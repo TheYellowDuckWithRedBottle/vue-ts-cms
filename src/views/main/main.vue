@@ -1,17 +1,10 @@
 <template>
   <div class="common-layout">
-    <el-container class="layout-container">
-      <el-aside class="el-side">
-        <nav-menu />
-      </el-aside>
-      <el-container class="el-right-side">
-        <el-header class="el-header">
-          <nav-header />
-        </el-header>
-        <el-main class="el-main">Main</el-main>
-        <el-footer class="el-footer">Footer</el-footer>
-      </el-container>
-    </el-container>
+    <nav-header />
+    <div class="layout-body">
+      <nav-menu />
+      <menuPanel />
+    </div>
   </div>
 </template>
 
@@ -19,11 +12,13 @@
 import { defineComponent } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
+import menuPanel from '@/components/menuPanel/menuPanel.vue'
 
 export default defineComponent({
   components: {
     NavMenu,
-    navHeader
+    navHeader,
+    menuPanel
   },
   setup() {
     return {}
@@ -39,18 +34,9 @@ export default defineComponent({
     height: 100%;
   }
 }
-.el-right-side {
+.layout-body {
   height: 100%;
-}
-.el-side {
-  width: 200px;
-  height: 100%;
-  background: #00a1d6;
-}
-.el-header {
-  height: 10%;
-}
-.el-main {
-  height: 80%;
+  width: 100%;
+  display: flex;
 }
 </style>
