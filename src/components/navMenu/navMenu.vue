@@ -4,10 +4,23 @@
       <div
         v-for="(item, index) in userMenu"
         :key="index"
+        class="menu-item"
         @click="clickMenuItem(item, index)"
         @mouseenter="hoverMenuItem(item, index)"
         @mouseleave="leaveMenuItem(item, index)"
       >
+        <div
+          class="menu-child"
+          v-if="item.children && item.children.length > 0 && item.showChild"
+        >
+          <div
+            v-for="(child, childIndex) in item.children"
+            :key="childIndex"
+            class="menu-child-name"
+          >
+            <span>{{ child.title }}</span>
+          </div>
+        </div>
         <div class="menu-item" v-if="item.name === 'layerlist'">
           <img src="@/assets/img/widget-icons/layerlist.png" alt="" />
           <span class="menu-name">{{ item.title }}</span>
@@ -31,14 +44,6 @@
         <div class="menu-item" v-else>
           <img src="@/assets/img/widget-icons/default.png" alt="" />
           <span class="menu-name">{{ item.title }}</span>
-        </div>
-        <div v-if="item.children && item.children.length > 0 && item.showChild">
-          <template
-            v-for="(child, childIndex) in item.children"
-            :key="childIndex"
-          >
-            <span class="menu-name">{{ child.title }}</span>
-          </template>
         </div>
       </div>
     </div>
@@ -66,7 +71,14 @@ export default defineComponent({
     userMenu = reactive([
       { name: 'layerlist', title: '数据', children: [] },
       { name: 'videomanager', title: '视频' },
-      { name: 'analysis_group', title: '分析', children: [{ name: 'sdxz' }] },
+      {
+        name: 'analysis_group',
+        title: '分析',
+        children: [
+          { name: 'sdxz', title: '三调现状' },
+          { name: 'tdlyxz', title: '土地利用现状' }
+        ]
+      },
       { name: 'identify', title: '属性' },
       { name: 'query', title: '查询' },
       { name: 'measure', title: '量测' }
@@ -80,7 +92,7 @@ export default defineComponent({
     }
     const hoverMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = true
-      console.log(menuItem, index)
+      console.log(userMenu, index)
     }
     const leaveMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = false
@@ -105,7 +117,9 @@ export default defineComponent({
 
 <style scoped>
 .navMenu-layout {
-  height: calc(93% - 10px);
+  height: calc(100% - 10px);
+  position: relative;
+  z-index: 3;
 }
 .nav-content {
   height: 100%;
@@ -115,18 +129,18 @@ export default defineComponent({
 }
 .menu-item {
   width: 100%;
-  height: 48px;
+  height: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 14px;
-  padding: 2px 0px;
   border-bottom: 1px solid white;
-  cursor: pointer;
+  position: relative;
 }
 .menu-item:hover {
   background: rgb(66, 133, 244);
   color: white;
+  cursor: pointer;
 }
 img {
   width: 30px;
@@ -136,5 +150,16 @@ img {
   width: 100%;
   height: 1px;
   background: white;
+}
+.menu-child {
+  position: absolute;
+  left: 50px;
+  width: 170px;
+  color: white;
+  background: rgb(66, 133, 244);
+}
+.menu-child-name {
+  padding: 10px 8px;
+  font-size: 14px;
 }
 </style>
