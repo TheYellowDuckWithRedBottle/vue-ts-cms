@@ -13,7 +13,9 @@
         <input placeholder="搜索/功能" class="el-input" />
       </div>
       <div class="sys-login">
-        <el-icon><Location /></el-icon>
+        <div class="user-icon">
+          <font-awesome-icon icon="fa-solid fa-user" />
+        </div>
         <span class="username">{{ username }}</span>
       </div>
     </div>
@@ -21,12 +23,9 @@
 </template>
 
 <script lang="ts">
-import { User, Location } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 export default {
-  components: {
-    Location
-  },
+  components: {},
   setup() {
     let username = '匿名用户'
     const input1 = ref('')
@@ -79,13 +78,17 @@ span {
   align-items: center;
   height: 100%;
   padding-left: 8px;
-  font-size: 12px;
+  font-size: 14px;
+}
+.user-icon {
+  padding-right: 8px;
 }
 .sys-search {
   height: 100%;
   display: flex;
   align-items: center;
 }
+
 .el-input {
   display: block;
   height: 60%;

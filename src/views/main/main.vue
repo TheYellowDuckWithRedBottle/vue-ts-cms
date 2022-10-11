@@ -1,9 +1,15 @@
 <template>
   <div class="common-layout">
     <nav-header />
+    <navTopTool @collapse="collapseMenu" />
     <div class="layout-body">
-      <nav-menu />
-      <menuPanel />
+      <nav-menu v-if="isCollapse" />
+      <menuPanel
+        @collapse="collapseMenu"
+        :isCollapse="isCollapse"
+        v-if="isCollapse"
+      />
+      <mapContainer />
     </div>
   </div>
 </template>
@@ -12,22 +18,25 @@
 import { defineComponent, ref } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
+import navTopTool from '@/components/navTopTool/navTopTool.vue'
 import menuPanel from '@/components/menuPanel/menuPanel.vue'
+import mapContainer from '@/components/mapContainer/mapContainer.vue'
 
 export default defineComponent({
   components: {
     NavMenu,
     navHeader,
-    menuPanel
+    navTopTool,
+    menuPanel,
+    mapContainer
   },
   setup() {
-    let isCollapse = ref(false)
-    const changeFolder = (isFolder: boolean) => {
-      console.log(isFolder)
-      isCollapse.value = isFolder
+    let isCollapse = ref(true)
+    function collapseMenu(value: boolean) {
+      isCollapse.value = value
     }
     return {
-      changeFolder,
+      collapseMenu,
       isCollapse
     }
   }
@@ -43,7 +52,7 @@ export default defineComponent({
   }
 }
 .layout-body {
-  height: 100%;
+  height: calc(93% - 35px;);
   width: 100%;
   display: flex;
 }

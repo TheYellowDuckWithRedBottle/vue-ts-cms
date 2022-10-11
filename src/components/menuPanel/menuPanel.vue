@@ -2,10 +2,10 @@
   <div class="operate-panel">
     <div class="panel-header">
       <div class="title-header">
-        <slot name="panel-title"></slot>
+        <slot name="panel-title">数据列表</slot>
       </div>
-      <div class="collapse-wrap">
-        <i></i>
+      <div class="collapse-wrap" @click="collapseMenuPanel">
+        <font-awesome-icon icon="fa-solid fa-bars" />
       </div>
     </div>
     <div class="divider-wrapper">
@@ -16,19 +16,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive } from 'vue'
+import { defineComponent, toRefs, reactive } from 'vue'
 export default defineComponent({
-  setup() {
-    return {}
+  props: {
+    isCollapse: Boolean
+  },
+  setup(props, { emit }) {
+    const { isCollapse } = toRefs(props)
+    function collapseMenuPanel() {
+      emit('collapse', !isCollapse)
+    }
+    return {
+      collapseMenuPanel
+    }
   }
 })
 </script>
 
 <style scope>
 .operate-panel {
+  background: white;
   border-right: 1px solid #dcdcdc;
   height: 100%;
   width: 400px;
+  position: relative;
+  z-index: 2;
 }
 .panel-header {
   width: 100%;
@@ -36,7 +48,7 @@ export default defineComponent({
   display: flex;
   box-sizing: border-box;
   justify-content: space-between;
-  padding: 8px;
+  padding: 12px;
 }
 .divider-wrapper {
   width: 100%;
@@ -48,5 +60,9 @@ export default defineComponent({
   width: 96%;
   height: 100%;
   background-color: rgb(119, 162, 233);
+}
+.collapse-wrap:hover {
+  cursor: pointer;
+  color: #428bca;
 }
 </style>
