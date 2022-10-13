@@ -13,6 +13,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/login/login.vue')
   },
   {
+    path: '/config',
+    name: 'config',
+    component: () => import('@/views/config/config.vue')
+  },
+  {
     path: '/main',
     meta: {
       title: '地图浏览'
