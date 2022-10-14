@@ -73,4 +73,8 @@ export default defineComponent({
 .config-title-icon {
   padding-left: 4px;
 }
+.config-title-icon:hover {
+  color: #428bca;
+  cursor: pointer;
+}
 </style>
