@@ -52,7 +52,7 @@ export default defineComponent({
   }
 }
 .layout-body {
-  height: calc(93% - 35px;);
+  height: 93%;
   width: 100%;
   display: flex;
 }
