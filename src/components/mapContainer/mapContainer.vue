@@ -17,13 +17,67 @@ export default defineComponent({
   },
   setup() {
     onMounted(() => {
-      var map = L.map('map').setView([51.505, -0.09], 13)
+      positionControl()
+      var map = L.map('map', {
+        attributionControl: false,
+        zoomControl: false
+      }).setView([51.505, -0.09], 18)
+      var zoomControl = L.control.zoom({ position: 'bottomright' })
+      var scaleControl = L.control.scale({ metric: true, imperial: false })
+      var pos = L.control.pos({ position: 'bottomleft' })
+      // 添加位置控件,添加放大缩小控件,添加比例尺控件
+      pos.addTo(map)
+      map.addControl(zoomControl)
+      map.addControl(scaleControl)
+
+      //map.on('mouseover', onMapMove)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 4,
         attribution: '© OpenStreetMap'
       }).addTo(map)
     })
-    return {}
+    function onMapMove(e) {
+      console.log(e.latlng)
+    }
+    // 构造显示位置的控件
+    function positionControl() {
+      L.Control.Pos = L.Control.extend({
+        option: {
+          position: 'bottomleft'
+        },
+        initlize: function (options) {
+          L.Util.extend(this.options, options)
+        },
+        onAdd: function (map) {
+          console.log(map)
+          var className = 'leaflet-control-pos'
+          this._container = L.DomUtil.create('div', className)
+          map.on('mousemove', this._updatePos, this)
+          return this._container
+        },
+        _updatePos: function (position) {
+          if (position && position.latlng) {
+            this._container.innerHTML =
+              'X:' +
+              this._numberFix(position.latlng.lat) +
+              '  ' +
+              'Y:' +
+              this._numberFix(position.latlng.lng)
+          } else {
+            this._container.innerHTML = '未监听到'
+          }
+        },
+        _numberFix: function (number) {
+          return number.toFixed(4)
+        }
+      })
+      L.control.pos = function (options) {
+        return new L.Control.Pos(options)
+      }
+    }
+    return {
+      onMapMove
+    }
   }
 })
 </script>
@@ -37,5 +91,8 @@ export default defineComponent({
 #map {
   width: 100%;
   height: 100%;
+}
+.leaflet-control-pos {
+  background: blue;
 }
 </style>

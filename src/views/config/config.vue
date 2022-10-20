@@ -25,17 +25,21 @@
       <div class="config-navMenu">
         <configNavMenu />
       </div>
-      <div class="menu-body"></div>
+      <div class="menu-body">
+        <configPanel />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import configNavMenu from './configBody/configNavMenu.vue'
+import configPanel from './configBody/configPanel.vue'
 import { defineComponent, ref } from 'vue'
 export default defineComponent({
   components: {
-    configNavMenu
+    configNavMenu,
+    configPanel
   },
   setup() {
     let isShowHelpDoc = ref(false)
@@ -117,11 +121,16 @@ export default defineComponent({
 .config-body {
   height: calc(100% - 45px);
   width: 100%;
+  display: flex;
   background: #efeef0;
 }
 .config-navMenu {
   width: 200px;
   height: 100%;
   border-right: 1px solid #e5e5e5;
+}
+.menu-body {
+  width: calc(100% - 200px);
+  height: 100%;
 }
 </style>
