@@ -7,7 +7,12 @@
             <font-awesome-icon icon="fa-solid fa-bars" />
             <span class="config-title-icon">{{ item.title }}</span>
           </div>
-          <div>
+          <div
+            v-show="item.children && item.children.length > 0"
+            :class="{
+              'child-active': item.children && item.children.length > 0
+            }"
+          >
             <font-awesome-icon icon="fa-solid fa-bars" />
           </div>
         </div>
@@ -17,7 +22,7 @@
             :key="childIndex"
             class="config-child"
           >
-            <div>{{ child.title }}</div>
+            <div class="config-menu-title">{{ child.title }}</div>
           </div>
         </template>
       </div>
@@ -50,23 +55,26 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: grey;
+  color: black;
   padding: 10px 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .config-menu-item {
   width: 100%;
 }
 .config-menu-title {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
-  padding: 8px;
+  padding: 10px;
+  box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
+}
+.child-active {
 }
 .config-child {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 30px;
 }
