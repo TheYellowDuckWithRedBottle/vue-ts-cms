@@ -3,7 +3,7 @@
     <nav-header />
     <navTopTool @collapse="collapseMenu" />
     <div class="layout-body">
-      <nav-menu v-if="isCollapse" />
+      <nav-menu v-if="isCollapse" @open="openMenu" :menuData="menuData" />
       <menuPanel
         @collapse="collapseMenu"
         :isCollapse="isCollapse"
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
 import navTopTool from '@/components/navTopTool/navTopTool.vue'
@@ -32,12 +32,33 @@ export default defineComponent({
   },
   setup() {
     let isCollapse = ref(true)
+    let menuData = reactive([
+      { name: 'layerlist', title: '数据', children: [] },
+      { name: 'videomanager', title: '视频' },
+      {
+        name: 'analysis_group',
+        title: '分析',
+        children: [
+          { name: 'sdxz', title: '三调现状' },
+          { name: 'tdlyxz', title: '土地利用现状' }
+        ]
+      },
+      { name: 'identify', title: '属性' },
+      { name: 'query', title: '查询' },
+      { name: 'measure', title: '量测' }
+    ])
+    let currentWidget = reactive(menuData[0])
     function collapseMenu(value: boolean) {
       isCollapse.value = value
     }
+    function openMenu(widgetName: string) {
+      console.log(widgetName)
+    }
     return {
       collapseMenu,
-      isCollapse
+      isCollapse,
+      openMenu,
+      menuData
     }
   }
 })

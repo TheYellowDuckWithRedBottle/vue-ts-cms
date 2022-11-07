@@ -13,10 +13,19 @@
               'child-active': item.children && item.children.length > 0
             }"
           >
-            <font-awesome-icon icon="fa-solid fa-bars" />
+            <font-awesome-icon
+              icon="fa-solid fa-folder"
+              @click="clickFoder"
+              v-if="isFolder"
+            />
+            <font-awesome-icon
+              icon="fa-solid fa-folder-open"
+              @click="clickFoder"
+              v-else
+            />
           </div>
         </div>
-        <template v-if="item.children && item.children.length > 0">
+        <template v-if="item.children && item.children.length > 0 && isFolder">
           <div
             v-for="(child, childIndex) in item.children"
             :key="childIndex"
@@ -32,9 +41,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 export default defineComponent({
   setup() {
+    let isFolder = ref(true)
     const configMenu = [
       { title: '模板管理', icon: '' },
       {
@@ -44,7 +54,11 @@ export default defineComponent({
       },
       { title: '系统管理', icon: '' }
     ]
-    return { configMenu }
+    const clickFoder = function () {
+      debugger
+      isFolder.value = !ref(isFolder.value)
+    }
+    return { configMenu, clickFoder, isFolder }
   }
 })
 </script>
@@ -71,6 +85,7 @@ export default defineComponent({
   border-bottom: 1px solid #e5e5e5;
 }
 .child-active {
+  width: 30px;
 }
 .config-child {
   display: flex;

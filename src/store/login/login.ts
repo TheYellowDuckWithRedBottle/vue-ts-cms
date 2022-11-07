@@ -30,7 +30,7 @@ const loginModule: Module<ILoginState, IRootState> = {
       state.userMenu = userMenu
 
       const routes: RouteRecordRaw[] = []
-      const path = require.context('@/router/main', true, /\.ts$/)
+      // const path = require.context('@/router/main', true, /\.ts$/)
     }
   },
   actions: {

@@ -61,46 +61,35 @@ export default defineComponent({
     collapse: {
       default: true,
       type: Boolean
+    },
+    menuData: {
+      default: () => [],
+      type: Array
     }
   },
-  setup() {
+  setup(props, { emit }) {
     // const store = userStore<IRootState>()
     // store.state.login
     const isCollapse = false
     let userMenu = Cache.getCache('userMenu')
-    userMenu = reactive([
-      { name: 'layerlist', title: '数据', children: [] },
-      { name: 'videomanager', title: '视频' },
-      {
-        name: 'analysis_group',
-        title: '分析',
-        children: [
-          { name: 'sdxz', title: '三调现状' },
-          { name: 'tdlyxz', title: '土地利用现状' }
-        ]
-      },
-      { name: 'identify', title: '属性' },
-      { name: 'query', title: '查询' },
-      { name: 'measure', title: '量测' }
-    ])
+    userMenu = reactive(props.menuData)
     console.log(userMenu)
     const handleOpen = () => {
       console.log('open')
     }
     const handleClose = () => {
-      console.log('open')
+      console.log('close')
     }
     const hoverMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = true
-      console.log(userMenu, index)
     }
     const leaveMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = false
-      console.log(menuItem, index)
     }
     const clickMenuItem = (menuItem: any, index: number) => {
       console.log(menuItem)
       userMenu[index]['showChild'] = true
+      emit('open', menuItem)
     }
     return {
       isCollapse,
@@ -130,7 +119,7 @@ export default defineComponent({
 .menu-item {
   width: 100%;
   height: 55px;
-  padding-top: 2px;
+  margin-top: 2px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -162,5 +151,12 @@ img {
 .menu-child-name {
   padding: 10px 8px;
   font-size: 14px;
+  width: 100%;
+}
+.menu-child-name :hover {
+  padding: 10px 8px;
+  font-size: 14px;
+  color: rgb(66, 133, 244);
+  background-color: white;
 }
 </style>

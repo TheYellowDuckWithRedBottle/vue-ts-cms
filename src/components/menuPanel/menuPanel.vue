@@ -13,16 +13,31 @@
     </div>
     <div class="panel-body">
       <LayerList />
+      <Analysis />
+      <Attribute />
+      <FileImport />
+      <Measure />
+      <VideoManager />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, toRefs, reactive } from 'vue'
-import LayerList from '@/views/layerlist/layerList.vue'
+import LayerList from '@/views//widgets/widgetLayerlist/layerList.vue'
+import VideoManager from '@/views//widgets/widgetVideo/widgetVideo.vue'
+import Analysis from '@/views//widgets/widgetAnalysis/widgetAnalysis.vue'
+import Attribute from '@/views//widgets/widgetAttribute/widgetAttribute.vue'
+import FileImport from '@/views//widgets/widgetFileImport/widgetFileImport.vue'
+import Measure from '@/views//widgets/widgetMeasure/widgetMeasure.vue'
 export default defineComponent({
   components: {
-    LayerList
+    LayerList,
+    VideoManager,
+    Analysis,
+    Attribute,
+    FileImport,
+    Measure
   },
   props: {
     isCollapse: Boolean

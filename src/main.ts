@@ -5,7 +5,9 @@ import {
   faUser,
   faBars,
   faCircleQuestion,
-  faXmark
+  faXmark,
+  faFolder,
+  faFolderOpen
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -20,6 +22,8 @@ library.add(faUser)
 library.add(faBars)
 library.add(faCircleQuestion)
 library.add(faXmark)
+library.add(faFolder)
+library.add(faFolderOpen)
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
