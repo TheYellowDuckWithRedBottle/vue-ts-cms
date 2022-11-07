@@ -20,13 +20,17 @@
     </div>
   </div>
   <div class="tab-page-Body">
-    <div></div>
+    <configHeader></configHeader>
   </div>
 </template>
 
 <script lang="ts">
+import configHeader from '../configPanel/ConfigHeader.vue'
 import { defineComponent, reactive } from 'vue'
 export default defineComponent({
+  components: {
+    configHeader
+  },
   setup() {
     const tabPages = reactive([
       { title: '模板管理', isHover: false },
