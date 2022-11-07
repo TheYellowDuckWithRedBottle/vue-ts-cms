@@ -11,13 +11,19 @@
     <div class="divider-wrapper">
       <div class="divider"></div>
     </div>
-    <div class="panel-body"></div>
+    <div class="panel-body">
+      <LayerList />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, toRefs, reactive } from 'vue'
+import LayerList from '@/views/layerlist/layerList.vue'
 export default defineComponent({
+  components: {
+    LayerList
+  },
   props: {
     isCollapse: Boolean
   },

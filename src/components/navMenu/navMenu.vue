@@ -129,7 +129,8 @@ export default defineComponent({
 }
 .menu-item {
   width: 100%;
-  height: 50px;
+  height: 55px;
+  padding-top: 2px;
   display: flex;
   flex-direction: column;
   align-items: center;
