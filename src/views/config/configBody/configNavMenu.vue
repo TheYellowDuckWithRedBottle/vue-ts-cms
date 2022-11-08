@@ -7,6 +7,7 @@
             <font-awesome-icon icon="fa-solid fa-bars" />
             <span class="config-title-icon">{{ item.title }}</span>
           </div>
+          <!-- 文件夹展开收起的图标 -->
           <div
             v-show="item.children && item.children.length > 0"
             :class="{
@@ -15,16 +16,17 @@
           >
             <font-awesome-icon
               icon="fa-solid fa-folder"
-              @click="clickFoder"
-              v-if="isFolder"
+              @click="clickFolder"
+              v-if="!isFolder"
             />
             <font-awesome-icon
               icon="fa-solid fa-folder-open"
-              @click="clickFoder"
+              @click="clickFolder"
               v-else
             />
           </div>
         </div>
+        <!-- 子文件 -->
         <template v-if="item.children && item.children.length > 0 && isFolder">
           <div
             v-for="(child, childIndex) in item.children"
@@ -41,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, Ref, ref } from 'vue'
 export default defineComponent({
   setup() {
-    let isFolder = ref(true)
+    let isFolder: Ref<boolean> = ref(true)
     const configMenu = [
       { title: '模板管理', icon: '' },
       {
@@ -54,11 +56,10 @@ export default defineComponent({
       },
       { title: '系统管理', icon: '' }
     ]
-    const clickFoder = function () {
-      debugger
-      isFolder.value = !ref(isFolder.value)
+    const clickFolder = function () {
+      isFolder.value = !isFolder.value
     }
-    return { configMenu, clickFoder, isFolder }
+    return { configMenu, clickFolder, isFolder }
   }
 })
 </script>
@@ -84,6 +85,9 @@ export default defineComponent({
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
 }
+.config-menu-title :hover {
+  cursor: pointer;
+}
 .child-active {
   width: 30px;
 }
@@ -92,6 +96,7 @@ export default defineComponent({
   justify-content: flex-start;
   align-items: center;
   height: 30px;
+  padding-left: 20px;
 }
 .config-title-icon {
   padding-left: 4px;

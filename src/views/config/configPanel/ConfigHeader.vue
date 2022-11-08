@@ -60,5 +60,6 @@ export default defineComponent({
   width: 100%;
   height: 93%;
   padding: 10px 30px;
+  overflow: auto;
 }
 </style>

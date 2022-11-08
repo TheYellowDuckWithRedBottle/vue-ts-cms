@@ -7,6 +7,7 @@
       <menuPanel
         @collapse="collapseMenu"
         :isCollapse="isCollapse"
+        :currentWidget="currentWidget"
         v-if="isCollapse"
       />
       <mapContainer />
@@ -47,18 +48,23 @@ export default defineComponent({
       { name: 'query', title: '查询' },
       { name: 'measure', title: '量测' }
     ])
-    let currentWidget = reactive(menuData[0])
+    let currentWidget: any = reactive(menuData[0])
     function collapseMenu(value: boolean) {
       isCollapse.value = value
     }
     function openMenu(widgetName: string) {
       console.log(widgetName)
+      currentWidget.value = menuData.find((item) => {
+        return item.name === widgetName
+      })
+      debugger
     }
     return {
       collapseMenu,
       isCollapse,
       openMenu,
-      menuData
+      menuData,
+      currentWidget
     }
   }
 })

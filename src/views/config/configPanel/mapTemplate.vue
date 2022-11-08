@@ -24,7 +24,7 @@ export default defineComponent({
 
 <style scoped>
 .template-item {
-  margin: 0px 10px;
+  margin: 5px 10px;
 }
 .item-panel {
   display: flex;

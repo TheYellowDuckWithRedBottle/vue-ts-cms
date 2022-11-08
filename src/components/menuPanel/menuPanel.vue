@@ -12,18 +12,18 @@
       <div class="divider"></div>
     </div>
     <div class="panel-body">
-      <LayerList />
-      <Analysis />
-      <Attribute />
-      <FileImport />
-      <Measure />
-      <VideoManager />
+      <LayerList v-if="currentWidget.name === 'layerlist'" />
+      <Analysis v-if="currentWidget.name === 'sdxz'" />
+      <Attribute v-if="currentWidget.name === 'attribute'" />
+      <FileImport v-if="currentWidget.name === 'fileImport'" />
+      <Measure v-if="currentWidget.name === 'measure'" />
+      <VideoManager v-if="currentWidget.name === 'videomanager'" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, reactive } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 import LayerList from '@/views//widgets/widgetLayerlist/layerList.vue'
 import VideoManager from '@/views//widgets/widgetVideo/widgetVideo.vue'
 import Analysis from '@/views//widgets/widgetAnalysis/widgetAnalysis.vue'
@@ -40,7 +40,10 @@ export default defineComponent({
     Measure
   },
   props: {
-    isCollapse: Boolean
+    isCollapse: Boolean,
+    currentWidget: {
+      type: Object
+    }
   },
   setup(props, { emit }) {
     const { isCollapse } = toRefs(props)

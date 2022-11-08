@@ -87,9 +87,8 @@ export default defineComponent({
       userMenu[index]['showChild'] = false
     }
     const clickMenuItem = (menuItem: any, index: number) => {
-      console.log(menuItem)
       userMenu[index]['showChild'] = true
-      emit('open', menuItem)
+      emit('open', menuItem.name)
     }
     return {
       isCollapse,
@@ -154,9 +153,7 @@ img {
   width: 100%;
 }
 .menu-child-name :hover {
-  padding: 10px 8px;
   font-size: 14px;
-  color: rgb(66, 133, 244);
-  background-color: white;
+  color: rgb(229, 229, 16);
 }
 </style>
