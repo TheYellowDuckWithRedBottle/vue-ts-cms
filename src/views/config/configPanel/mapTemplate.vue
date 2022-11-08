@@ -25,15 +25,16 @@ export default defineComponent({
 <style scoped>
 .template-item {
   width: 100%;
-  height: 100%;
   display: flex;
+  margin: 20px;
   justify-content: flex-start;
   align-content: center;
 }
 .item-panel {
   display: flex;
-  width: 20%;
-  height: 30%;
+  width: 200px;
+  height: 280px;
+  margin: 10px;
   border: 1px solid grey;
 }
 .map-cover {
