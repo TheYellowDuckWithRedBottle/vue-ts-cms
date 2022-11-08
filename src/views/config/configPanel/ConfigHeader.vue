@@ -29,7 +29,7 @@ export default defineComponent({
   },
   setup() {
     const input1 = ''
-    const mapTemplates = [1, 2, 3, 4]
+    const mapTemplates = [1, 2, 3, 4, 5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
     return { input1, mapTemplates }
   }
 })
@@ -54,8 +54,11 @@ export default defineComponent({
 }
 .template-body {
   display: flex;
+  box-sizing: border-box;
   justify-content: flex-start;
+  flex-wrap: wrap;
   width: 100%;
   height: 93%;
+  padding: 10px 30px;
 }
 </style>

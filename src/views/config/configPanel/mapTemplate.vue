@@ -24,17 +24,14 @@ export default defineComponent({
 
 <style scoped>
 .template-item {
-  width: 100%;
-  display: flex;
-  margin: 20px;
-  justify-content: flex-start;
-  align-content: center;
+  margin: 0px 10px;
 }
 .item-panel {
   display: flex;
+  flex-direction: column;
   width: 200px;
   height: 280px;
-  margin: 10px;
+  margin: 5px;
   border: 1px solid grey;
 }
 .map-cover {
