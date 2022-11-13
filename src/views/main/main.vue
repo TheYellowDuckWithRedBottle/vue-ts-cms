@@ -22,7 +22,11 @@ import navHeader from '@/components/navHeader/navHeader.vue'
 import navTopTool from '@/components/navTopTool/navTopTool.vue'
 import menuPanel from '@/components/menuPanel/menuPanel.vue'
 import mapContainer from '@/components/mapContainer/mapContainer.vue'
-
+type Menu = {
+  name: string
+  title: string
+  children: Array<Menu>
+}
 export default defineComponent({
   components: {
     NavMenu,
@@ -54,10 +58,10 @@ export default defineComponent({
     }
     function openMenu(widgetName: string) {
       console.log(widgetName)
-      currentWidget.value = menuData.find((item) => {
+      const currentObj: any = menuData.find((item) => {
         return item.name === widgetName
       })
-      debugger
+      currentWidget = reactive(currentObj)
     }
     return {
       collapseMenu,
