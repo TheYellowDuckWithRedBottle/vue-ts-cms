@@ -22,6 +22,7 @@
 </template>
 
 <script lang="ts">
+import Test from './test.vue'
 import { defineComponent, ref } from 'vue'
 interface Tree {
   label: string
@@ -30,6 +31,7 @@ interface Tree {
 }
 export default defineComponent({
   name: 'App',
+  components: {},
   setup() {
     const dataSource = ref<Tree[]>([
       {
