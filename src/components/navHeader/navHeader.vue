@@ -45,8 +45,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(66, 133, 244);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--backgroundColor);
   padding: 10px;
 }
 .nav-sys {

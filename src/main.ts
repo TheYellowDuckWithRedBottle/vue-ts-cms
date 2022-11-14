@@ -7,14 +7,18 @@ import {
   faCircleQuestion,
   faXmark,
   faFolder,
-  faFolderOpen
+  faFolderOpen,
+  faEye,
+  faTrash,
+  faGear,
+  faCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import 'normalize.css'
 import './assets/css/index.less'
 import 'leaflet/dist/leaflet.css'
-import './global/baseColor.less'
+import './global/baseColor.less' // 导入全局定义的主题色
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -25,6 +29,10 @@ library.add(faCircleQuestion)
 library.add(faXmark)
 library.add(faFolder)
 library.add(faFolderOpen)
+library.add(faEye)
+library.add(faGear)
+library.add(faTrash)
+library.add(faCircle)
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)

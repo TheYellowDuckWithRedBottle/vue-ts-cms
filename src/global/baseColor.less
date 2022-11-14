@@ -1,8 +1,16 @@
 /* 默认主题色 */
-@default: #1989fa;
+@default: #428bca;
+@borderColor: #efefef;
+@cardBorderColor: #eee;
+@backgroundColor: white;
+@activeTextColor: rgb(229, 229, 16);
 /* 设置默认主题色 */
 :root {
 	--color-primary: @default;
+  --borderColor: @borderColor;
+  --cardBorderColor: @cardBorderColor;
+  --backgroundColor: @backgroundColor;
+  --activeTextColor: @activeTextColor;
 }
 :root.theme_red {
 	--color-primary: #ee0a24;

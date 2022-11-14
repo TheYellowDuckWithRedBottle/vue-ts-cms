@@ -123,12 +123,12 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   font-size: 14px;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid var(--backgroundColor);
   position: relative;
 }
 .menu-item:hover {
-  background: rgb(66, 133, 244);
-  color: white;
+  background: var(--color-primary);
+  color: var(--backgroundColor);
   cursor: pointer;
 }
 img {
@@ -138,14 +138,14 @@ img {
 .divider {
   width: 100%;
   height: 1px;
-  background: white;
+  background: var(--backgroundColor);
 }
 .menu-child {
   position: absolute;
   left: 50px;
   width: 170px;
-  color: white;
-  background: rgb(66, 133, 244);
+  color: var(--backgroundColor);
+  background: var(--color-primary);
 }
 .menu-child-name {
   padding: 10px 8px;
@@ -154,6 +154,6 @@ img {
 }
 .menu-child-name :hover {
   font-size: 14px;
-  color: rgb(229, 229, 16);
+  color: var(--activeTextColor);
 }
 </style>
