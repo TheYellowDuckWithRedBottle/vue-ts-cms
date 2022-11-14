@@ -1,0 +1,25 @@
+/* 默认主题色 */
+@default: #428bca;
+@borderColor: #efefef;
+@cardBorderColor: #eee;
+@backgroundColor: white;
+@activeTextColor: rgb(229, 229, 16);
+/* 设置默认主题色 */
+:root {
+	--color-primary: @default;
+  --borderColor: @borderColor;
+  --cardBorderColor: @cardBorderColor;
+  --backgroundColor: @backgroundColor;
+  --activeTextColor: @activeTextColor;
+}
+:root.theme_red {
+	--color-primary: #ee0a24;
+}
+:root.theme_dark {
+	--color-primary: #333;
+}
+/* class为'text'的内容，要根据主题色更改颜色 */
+.text {
+	color: var(--color-primary);
+}
+
