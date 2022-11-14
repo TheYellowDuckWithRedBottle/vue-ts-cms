@@ -1,5 +1,5 @@
 const path = require('path')
-
+const resolve = require('resolve')
 module.exports = {
   // 1.配置方式一: CLI提供的属性
   outputDir: './build1',
@@ -15,6 +15,20 @@ module.exports = {
       }
     }
   },
+  css: {
+    loaderOptions: {
+      sass: {
+        data: `@import "@global/baseColor.scss"`
+      },
+      less: {
+        lessOptions: {
+          strictMath: true, // 严格模式
+          modifyVars: {
+            hack: `true; @import "/src/global/baseColor.less";`
+          }
+        },
+      }
+    },
   //publicPath: './',
   // devServer: {
   //   proxy: {

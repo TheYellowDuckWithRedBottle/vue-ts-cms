@@ -1,0 +1,17 @@
+/* 默认主题色 */
+@default: #1989fa;
+/* 设置默认主题色 */
+:root {
+	--color-primary: @default;
+}
+:root.theme_red {
+	--color-primary: #ee0a24;
+}
+:root.theme_dark {
+	--color-primary: #333;
+}
+/* class为'text'的内容，要根据主题色更改颜色 */
+.text {
+	color: var(--color-primary);
+}
+
