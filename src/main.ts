@@ -39,5 +39,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(globalRegister)
 app.use(router)
 app.use(store)
+app.config.globalProperties.$map = null
 
 app.mount('#app')
