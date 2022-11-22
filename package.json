@@ -20,6 +20,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.62",
+    "esri-leaflet": "^3.0.8",
     "leaflet": "^1.9.2",
     "leaflet.pm": "^2.2.0",
     "less-loader": "^5.0.0",

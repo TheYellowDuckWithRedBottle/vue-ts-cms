@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-tree
-      :data="dataSource"
+      :data="treeData"
       :props="defaultProps"
       @node-click="handleNodeClick"
     >
@@ -21,61 +21,113 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import Test from './test.vue'
-import { defineComponent, ref } from 'vue'
-interface Tree {
-  label: string
-  service?: string
-  children?: Tree[]
-}
+import { defineComponent, ref, getCurrentInstance } from 'vue'
+import L from 'leaflet'
+import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
+// interface Tree {
+//   alias?: string
+//   alpha?: string
+//   category?: string
+//   group?: string
+//   id?: string
+//   index?: string
+//   name?: string
+//   type?: string
+//   isCheck?: boolean
+//   url?: string
+//   visiable?: string
+//   xMaxExtent?: number
+//   xMinExtent?: number
+//   xzdm?: string
+//   yMaxExtent?: number
+//   yMinExtent?: number
+//   year?: string
+//   label?: string
+//   children?: Tree[]
+// }
 export default defineComponent({
   name: 'App',
   components: {},
   setup() {
-    const dataSource = ref<Tree[]>([
+    let instance
+    const treeData = ref([
       {
-        label: '服务一',
+        alias: '土地利用现状',
+        isCheck: false,
         children: [
           {
-            label: 'Level two 1-1',
+            alias: 'Level two 1-1',
+            isCheck: false,
             children: [
               {
-                label: 'Level three 1-1-1'
+                alias: '崇川地类图斑',
+                isCheck: false,
+                alpha: '1',
+                category: '土地利用现状',
+                group: '015644b88106402896c8564443a4044e',
+                id: '01817583a1984028845481751ce80044',
+                index: '1',
+                name: 'DLTB_320600',
+                type: 'dynamic',
+                url: 'http://127.0.0.1:8008/oms/arcgisrest/土地利用现状/DLTB_320600/MapServer',
+                visiable: 'true',
+                xMaxExtent: 40591284.7803,
+                xMinExtent: 40569320.9189,
+                xzdm: '320000',
+                yMaxExtent: 3558237.2593,
+                yMinExtent: 3530790.963,
+                year: '2020'
               },
               {
-                label: 'Level three 1-1-2'
+                alias: 'Level three 1-1-2',
+                isCheck: false
               }
             ]
           }
         ]
       },
       {
-        label: 'Level one 2',
+        alias: 'Level one 2',
+        isCheck: false,
         children: [
           {
-            label: 'Level two 2-1'
+            alias: 'Level two 2-1',
+            isCheck: false
           },
           {
-            label: 'Level two 2-2'
+            alias: 'Level two 2-2',
+            isCheck: false
           }
         ]
       }
     ])
 
-    const handleNodeClick = (e: any) => {
+    const handleNodeClick = (e) => {
       console.log(e)
     }
-    const openService = (data: any, node: any) => {
+    setTimeout(() => {
+      instance = getCurrentInstance()
+      console.log(instance)
+    }, 2000)
+    const openService = (data, node) => {
+      debugger
+      console.log(instance)
       console.log(data.value)
       console.log(node.value)
+      let one = dynamicMapLayer({
+        url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
+        opacity: 0.8,
+        f: 'json'
+      })
     }
     const defaultProps = {
       children: 'children',
-      label: 'label'
+      label: 'alias'
     }
     return {
-      dataSource,
+      treeData,
       defaultProps,
       handleNodeClick,
       openService
