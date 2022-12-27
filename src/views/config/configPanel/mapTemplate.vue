@@ -23,7 +23,7 @@
         <div class="map-config">
           <font-awesome-icon icon="fa-solid fa-gear" />
         </div>
-        <div class="map-delete">
+        <div class="map-delete" @click = "deleteTemplate(mapTemplate)">
           <font-awesome-icon icon="fa-sharp fa-trash" />
         </div>
       </div>
@@ -39,6 +39,9 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const mapTemplate = toRefs(props)
+    function deleteTemplate (mapTemplate: any) {
+    }
+    return { deleteTemplate }
   }
 })
 </script>
