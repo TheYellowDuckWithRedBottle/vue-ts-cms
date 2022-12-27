@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, provide, ref } from 'vue'
+import { defineComponent, onMounted, provide, ref, getCurrentInstance } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 export default defineComponent({

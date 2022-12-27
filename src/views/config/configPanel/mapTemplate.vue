@@ -40,6 +40,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const mapTemplate = toRefs(props)
     function deleteTemplate (mapTemplate: any) {
+      console.log(mapTemplate)
     }
     return { deleteTemplate }
   }
