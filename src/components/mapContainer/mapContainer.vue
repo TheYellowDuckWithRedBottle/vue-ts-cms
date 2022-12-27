@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, getCurrentInstance } from 'vue'
+import { defineComponent, onMounted, provide, ref } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 export default defineComponent({
@@ -22,8 +22,10 @@ export default defineComponent({
       var map = L.map('map', {
         attributionControl: false,
         zoomControl: false
-      }).setView([51.505, -0.09], 18)
-      instance.appContext.config.globalProperties.$map = map
+      }).setView([119, 32], 18)
+      provide('map', map)
+      console.log(map)
+      window.map = map
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })

@@ -23,36 +23,21 @@
 
 <script>
 import Test from './test.vue'
-import { defineComponent, ref, getCurrentInstance } from 'vue'
 import L from 'leaflet'
-import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
-// interface Tree {
-//   alias?: string
-//   alpha?: string
-//   category?: string
-//   group?: string
-//   id?: string
-//   index?: string
-//   name?: string
-//   type?: string
-//   isCheck?: boolean
-//   url?: string
-//   visiable?: string
-//   xMaxExtent?: number
-//   xMinExtent?: number
-//   xzdm?: string
-//   yMaxExtent?: number
-//   yMinExtent?: number
-//   year?: string
-//   label?: string
-//   children?: Tree[]
-// }
+import { defineComponent, ref, inject } from 'vue'
+interface Tree {
+  label: string
+  service?: string
+  children?: Tree[]
+}
 export default defineComponent({
   name: 'App',
   components: {},
   setup() {
-    let instance
-    const treeData = ref([
+    let map = inject('map')
+    debugger
+    console.log(map)
+    const dataSource = ref<Tree[]>([
       {
         alias: '土地利用现状',
         isCheck: false,
@@ -62,23 +47,8 @@ export default defineComponent({
             isCheck: false,
             children: [
               {
-                alias: '崇川地类图斑',
-                isCheck: false,
-                alpha: '1',
-                category: '土地利用现状',
-                group: '015644b88106402896c8564443a4044e',
-                id: '01817583a1984028845481751ce80044',
-                index: '1',
-                name: 'DLTB_320600',
-                type: 'dynamic',
-                url: 'http://127.0.0.1:8008/oms/arcgisrest/土地利用现状/DLTB_320600/MapServer',
-                visiable: 'true',
-                xMaxExtent: 40591284.7803,
-                xMinExtent: 40569320.9189,
-                xzdm: '320000',
-                yMaxExtent: 3558237.2593,
-                yMinExtent: 3530790.963,
-                year: '2020'
+                label: 'wms服务',
+                service: 'http://localhost:8090/geoserver/WMS/wms?service=WMS&version=1.1.0&request=GetMap&layers=WMS:SHP_1636427035338&bbox=4.0615005015008755E7,3532560.982614258,4.061549804877387E7,3532911.3776800316&width=768&height=545&srs=EPSG:4528&styles=&format=application/openlayers'
               },
               {
                 alias: 'Level three 1-1-2',
@@ -107,20 +77,18 @@ export default defineComponent({
     const handleNodeClick = (e) => {
       console.log(e)
     }
-    setTimeout(() => {
-      instance = getCurrentInstance()
-      console.log(instance)
-    }, 2000)
-    const openService = (data, node) => {
-      debugger
-      console.log(instance)
-      console.log(data.value)
-      console.log(node.value)
-      let one = dynamicMapLayer({
-        url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
-        opacity: 0.8,
-        f: 'json'
-      })
+    const openService = (data: any, node: any) => {
+      console.log(data)
+      console.log(node)
+      //加载wms服务的图层
+      var wmsLayer = L.tileLayer.wms(
+          data.service, {
+                layers: 'nyc_roads',
+            }
+        );
+        //添加图层到地图
+        console.log(wmsLayer)
+        wmsLayer.addTo(window.map);
     }
     const defaultProps = {
       children: 'children',

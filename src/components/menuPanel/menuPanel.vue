@@ -57,7 +57,7 @@ export default defineComponent({
 
 <style scope>
 .operate-panel {
-  background: var(--backgroundColor);
+  background: var(--backgroundColro);
   border-right: 1px solid var(--borderColor);
   height: 100%;
   width: 400px;
