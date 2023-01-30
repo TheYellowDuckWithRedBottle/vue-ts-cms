@@ -16,6 +16,7 @@
           <div
             v-for="(child, childIndex) in item.children"
             :key="childIndex"
+            @click="clickMenuItem(child, index)"
             class="menu-child-name"
           >
             <span>{{ child.title }}</span>

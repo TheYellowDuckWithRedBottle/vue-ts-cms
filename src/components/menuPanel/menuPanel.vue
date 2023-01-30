@@ -2,7 +2,7 @@
   <div class="operate-panel">
     <div class="panel-header">
       <div class="title-header">
-        <slot name="panel-title">数据列表</slot>
+        <slot name="panel-title">{{currentWidget.title}}</slot>
       </div>
       <div class="collapse-wrap" @click="collapseMenuPanel">
         <font-awesome-icon icon="fa-solid fa-bars" />
@@ -15,7 +15,7 @@
       <LayerList v-if="currentWidget?.name === 'layerlist'" />
       <Analysis v-if="currentWidget?.name === 'sdxz'" />
       <Attribute v-if="currentWidget?.name === 'attribute'" />
-      <FileImport v-if="currentWidget?.name === 'fileImport'" />
+      <FileImport v-if="currentWidget?.name === 'query'" />
       <Measure v-if="currentWidget?.name === 'measure'" />
       <VideoManager v-if="currentWidget?.name === 'videomanager'" />
     </div>
@@ -44,12 +44,16 @@ export default defineComponent({
     currentWidget: Object
   },
   setup(props, { emit }) {
-    const { isCollapse, currentWidget } = toRefs(props)
+    const { isCollapse } = toRefs(props)
+
+    let state = reactive({
+
+    })
     function collapseMenuPanel() {
       emit('collapse', !isCollapse)
     }
     return {
-      collapseMenuPanel
+      collapseMenuPanel,
     }
   }
 })
