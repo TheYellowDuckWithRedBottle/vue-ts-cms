@@ -25,11 +25,11 @@
 import Test from './test.vue'
 import L from 'leaflet'
 import { defineComponent, ref, inject } from 'vue'
-interface Tree {
-  label: string
-  service?: string
-  children?: Tree[]
-}
+// interface Tree {
+//   label: string
+//   service?: string
+//   children?: Tree[]
+// }
 export default defineComponent({
   name: 'App',
   components: {},
@@ -37,7 +37,7 @@ export default defineComponent({
     let map = inject('map')
     debugger
     console.log(map)
-    const treeData = ref<Tree[]>([
+    const treeData =([
       {
         alias: '土地利用现状',
         isCheck: false,
@@ -47,7 +47,7 @@ export default defineComponent({
             isCheck: false,
             children: [
               {
-                label: 'wms服务',
+                alias: 'wms服务',
                 service: 'http://localhost:8090/geoserver/WMS/wms?service=WMS&version=1.1.0&request=GetMap&layers=WMS:SHP_1636427035338&bbox=4.0615005015008755E7,3532560.982614258,4.061549804877387E7,3532911.3776800316&width=768&height=545&srs=EPSG:4528&styles=&format=application/openlayers'
               },
               {
@@ -77,7 +77,7 @@ export default defineComponent({
     const handleNodeClick = (e) => {
       console.log(e)
     }
-    const openService = (data: any, node: any) => {
+    const openService = (data, node) => {
       console.log(data)
       console.log(node)
       //加载wms服务的图层

@@ -7,6 +7,7 @@
 <script>
 import { defineComponent, onMounted, provide, ref, getCurrentInstance } from 'vue'
 import L from 'leaflet'
+import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
 import 'leaflet/dist/leaflet.css'
 export default defineComponent({
   props: {
@@ -24,7 +25,6 @@ export default defineComponent({
         zoomControl: false
       }).setView([119, 32], 18)
       provide('map', map)
-      console.log(map)
       window.map = map
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
@@ -33,12 +33,14 @@ export default defineComponent({
       pos.addTo(map)
       map.addControl(zoomControl)
       map.addControl(scaleControl)
+      let dynamicLayer = dynamicMapLayer({
+        url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
+        opacity: 0.8,
+        f: 'json'
+      })
+      map.addLayer(dynamicLayer)
 
       //map.on('mouseover', onMapMove)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 4,
-        attribution: '© OpenStreetMap'
-      }).addTo(map)
     })
     function onMapMove(e) {
       console.log(e.latlng)

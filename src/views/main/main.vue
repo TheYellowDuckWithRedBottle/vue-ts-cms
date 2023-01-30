@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref,toRefs } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
 import navTopTool from '@/components/navTopTool/navTopTool.vue'
@@ -37,7 +37,8 @@ export default defineComponent({
   },
   setup() {
     let isCollapse = ref(true)
-    let menuData = reactive([
+    let state = reactive({
+      menuData: [
       { name: 'layerlist', title: '数据', children: [] },
       { name: 'videomanager', title: '视频' },
       {
@@ -48,27 +49,36 @@ export default defineComponent({
           { name: 'tdlyxz', title: '土地利用现状' }
         ]
       },
-      { name: 'identify', title: '属性' },
+      { name: 'attribute', title: '属性' },
       { name: 'query', title: '查询' },
       { name: 'measure', title: '量测' }
-    ])
-    let currentWidget: any = reactive(menuData[0])
+    ],
+    currentWidget: {name:'layerlist',title:'数据'},
+    isCollapse:true
+    })
+
     function collapseMenu(value: boolean) {
       isCollapse.value = value
     }
     function openMenu(widgetName: string) {
       console.log(widgetName)
-      const currentObj: any = menuData.find((item) => {
-        return item.name === widgetName
-      })
-      currentWidget = reactive(currentObj)
+      travelTree(state.menuData,widgetName)
+    }
+    function travelTree(tree:any, target:string):any{
+      tree.forEach((element: { name: string,children:any,title:any }) => {
+        if(element.name == target){
+          state.currentWidget.name = element.name
+          state.currentWidget.title = element.title
+        }else if(element.children){
+          travelTree(element.children,target)
+        }
+      });
     }
     return {
       collapseMenu,
-      isCollapse,
+
       openMenu,
-      menuData,
-      currentWidget
+      ...toRefs(state)
     }
   }
 })

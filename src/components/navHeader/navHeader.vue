@@ -8,6 +8,7 @@
         <strong>标题</strong>
       </div>
     </div>
+    <!-- <testCom :lis="liDatas"></testCom> -->
     <div class="sys-user">
       <div class="sys-search">
         <input placeholder="搜索/功能" class="el-input" />
@@ -24,14 +25,23 @@
 
 <script lang="ts">
 import { ref } from 'vue'
+// import testCom from './testCom.vue'
 export default {
-  components: {},
+  components: {
+    // testCom
+  },
   setup() {
     let username = '匿名用户'
+    let liDatas = [
+      {name: '小米', age: 30},
+      {name: '老白', age: 28},
+      {name: '秀才', age: 28}
+    ]
     const input1 = ref('')
     return {
       username,
-      input1
+      input1,
+      liDatas
     }
   }
 }
