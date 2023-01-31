@@ -43,7 +43,7 @@ export default defineComponent({
         isCheck: false,
         children: [
           {
-            alias: 'Level two 1-1',
+            alias: '荥阳地类图斑',
             isCheck: false,
             children: [
               {
@@ -51,7 +51,7 @@ export default defineComponent({
                 service: 'http://localhost:8090/geoserver/WMS/wms?service=WMS&version=1.1.0&request=GetMap&layers=WMS:SHP_1636427035338&bbox=4.0615005015008755E7,3532560.982614258,4.061549804877387E7,3532911.3776800316&width=768&height=545&srs=EPSG:4528&styles=&format=application/openlayers'
               },
               {
-                alias: 'Level three 1-1-2',
+                alias: '荥阳点服务',
                 isCheck: false
               }
             ]
@@ -59,15 +59,15 @@ export default defineComponent({
         ]
       },
       {
-        alias: 'Level one 2',
+        alias: '基础数据',
         isCheck: false,
         children: [
           {
-            alias: 'Level two 2-1',
+            alias: '基础地理',
             isCheck: false
           },
           {
-            alias: 'Level two 2-2',
+            alias: '遥感影像',
             isCheck: false
           }
         ]

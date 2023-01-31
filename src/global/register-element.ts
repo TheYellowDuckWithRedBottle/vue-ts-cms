@@ -21,7 +21,8 @@ import {
   ElMenuItemGroup,
   ElIcon,
   ElTree,
-  ElDialog
+  ElDialog,
+  ElTable
 } from 'element-plus'
 
 const components = [
@@ -46,7 +47,8 @@ const components = [
   ElMenuItemGroup,
   ElIcon,
   ElTree,
-  ElDialog
+  ElDialog,
+  ElTable
 ]
 
 export default function (app: App): void {

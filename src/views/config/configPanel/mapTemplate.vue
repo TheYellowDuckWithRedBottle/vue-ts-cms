@@ -17,13 +17,13 @@
         </div>
       </div>
       <div class="map-operation">
-        <div class="map-viewer">
+        <div class="opera-icon map-viewer" @click="route2Map(mapTemplate)">
           <font-awesome-icon icon="fa-solid fa-eye" />
         </div>
-        <div class="map-config">
+        <div class="opera-icon map-config" @click="configMapFunction(mapTemplate)">
           <font-awesome-icon icon="fa-solid fa-gear" />
         </div>
-        <div class="map-delete" @click = "deleteTemplate(mapTemplate)">
+        <div class="opera-icon map-delete" @click = "deleteTemplate(mapTemplate)">
           <font-awesome-icon icon="fa-sharp fa-trash" />
         </div>
       </div>
@@ -42,7 +42,14 @@ export default defineComponent({
     function deleteTemplate (mapTemplate: any) {
       console.log(mapTemplate)
     }
-    return { deleteTemplate }
+    function route2Map (mapTemplate: any) {
+      window.open("")
+    }
+    function configMapFunction (mapTemplate: any) {
+      console.log(mapTemplate)
+      emit('configMapFunction',mapTemplate)
+    }
+    return { deleteTemplate, route2Map, configMapFunction }
   }
 })
 </script>
@@ -102,5 +109,8 @@ export default defineComponent({
   align-items: center;
   background: var(--borderColor);
   font-size: 20px;
+}
+.opera-icon:hover{
+  color: var(--color-primary)
 }
 </style>

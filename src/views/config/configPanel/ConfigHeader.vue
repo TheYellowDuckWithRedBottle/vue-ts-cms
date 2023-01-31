@@ -1,5 +1,6 @@
 <template>
-  <div class="map-panel">
+  <div class="map-panel-wrapper">
+    <div class="map-panel" v-if="!showConfigMapFun">
     <div class="search-header">
       <div class="search-panel-form">
         <el-input
@@ -65,29 +66,93 @@
       <template v-for="(item, index) in mapTemplates" :key="index">
         <mapTemplate
           @click="previewMap(item)"
+          @configMapFunction = "configCurrentMap"
           :mapTemplate="item"
         ></mapTemplate>
       </template>
+    </div>
+    </div>
+    <div class="config-fun-panel" v-else>
+      <div class="config-fun-header">
+        <div class="tabs-container">
+          <div v-for="(tab, index) in tabs" class="tab-wrapper"
+          @click="switchConfig(tab)"
+          :class="currentTab==tab?'active-tab':''"
+          :key="index">
+            <span class="tab-text">{{ tab }}</span>
+          </div>
+        </div>
+        <div class="buttons-container">
+          <el-button type="primary" size="small">查看</el-button>
+          <el-button type="success" size="small">刷新</el-button>
+        </div>
+      </div>
+      <div class="config-content">
+        <configAttribute v-if="currentTab=='属性配置'"></configAttribute>
+        <configService v-if="currentTab=='服务配置'"></configService>
+        <configFunction v-if="currentTab=='功能配置'"></configFunction>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { stat } from 'fs'
+import { defineComponent, reactive, ref, toRefs } from 'vue'
 import mapTemplate from './mapTemplate.vue'
+import configService from './ConfigServices.vue'
+import configAttribute from './ConfigAttribute.vue'
+import configFunction from './ConfigFunction.vue'
 export default defineComponent({
   components: {
-    mapTemplate
+    mapTemplate,
+    configService,
+    configAttribute,
+    configFunction
   },
   setup() {
-    const input1 = ''
-    let dialogVisible = ref(false)
+    let state = reactive({
+      input1: '',
+      dialogVisible: false,
+      showConfigMapFun: false,
+      tabs: ['模板列表','服务配置','功能配置','属性配置','缓存清理'],
+      currentTab:'服务配置'
+    })
     function previewMap(mapTemplateInfo: any) {
       console.log(mapTemplateInfo)
     }
     function addTemplate() {
       console.log('a')
-      dialogVisible.value = true
+      state.dialogVisible = true
+    }
+    // 点击底图模板的配置按钮
+    function configCurrentMap (mapTemplate: any) {
+      state.showConfigMapFun = true
+    }
+    // 切换tab页
+    function switchConfig (tab: string) {
+      debugger
+      state.currentTab = tab
+      switch (tab) {
+        case '模板列表':
+          //todo 跳转到首页
+          state.showConfigMapFun = false
+          break;
+        case '服务配置':
+
+          break;
+        case '功能配置':
+
+          break;
+        case '属性配置':
+
+          break;
+        case '缓存清理':
+
+          break;
+        default:
+          break;
+      }
     }
     const mapTemplates = [
       {
@@ -97,12 +162,21 @@ export default defineComponent({
         desc: ''
       }
     ]
-    return { input1, mapTemplates, previewMap, addTemplate, dialogVisible }
+    return { mapTemplates,
+      previewMap,
+      addTemplate,
+      configCurrentMap,
+      switchConfig,
+      ...toRefs(state) }
   }
 })
 </script>
 
 <style scoped lang="less">
+.map-panel-wrapper {
+  width: 100%;
+  height: 100%;
+}
 .map-panel {
   height: 100%;
   width: 100%;
@@ -188,4 +262,48 @@ export default defineComponent({
   padding: 10px 30px;
   overflow: auto;
 }
+// 配置功能的页面
+.config-fun-panel {
+  width: 100%;
+  height: 100%;
+}
+ .config-fun-header {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    background: rgb(245,245,245);
+    .tabs-container {
+      width: 90%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .tab-text {
+        height: 100%;
+        padding: 0px 10px;
+        color: var(--color-primary);
+      }
+    }
+    .buttons-container{
+      float: right;
+      width: 10%;
+      display: flex;
+      align-items: center;
+    }
+    .tab-wrapper{
+      height: 100%;
+      line-height: 40px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .active-tab {
+      border-bottom: 2px solid var(--color-primary);
+    }
+  }
+  .config-content{
+    width: 100%;
+    height: calc(100% - 64px);
+    padding:12px;
+    box-sizing: border-box;
+  }
 </style>
