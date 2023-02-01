@@ -35,7 +35,6 @@ export default defineComponent({
   components: {},
   setup() {
     let map = inject('map')
-    debugger
     console.log(map)
     const treeData =([
       {

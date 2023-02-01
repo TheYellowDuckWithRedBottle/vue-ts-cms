@@ -51,7 +51,8 @@ export default defineComponent({
       },
       { name: 'attribute', title: '属性' },
       { name: 'query', title: '查询' },
-      { name: 'measure', title: '量测' }
+      { name: 'measure', title: '量测' },
+      { name: 'import', title: '导入' }
     ],
     currentWidget: {name:'layerlist',title:'数据'},
     isCollapse:true

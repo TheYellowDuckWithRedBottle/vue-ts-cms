@@ -1,5 +1,5 @@
 <template>
-  <div>i am attribute</div>
+  <div>属性识别</div>
 </template>
 
 <script lang="ts">
