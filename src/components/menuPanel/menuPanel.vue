@@ -15,7 +15,7 @@
       <LayerList v-if="currentWidget?.name === 'layerlist'" />
       <Analysis v-if="currentWidget?.name === 'sdxz'" />
       <Attribute v-if="currentWidget?.name === 'attribute'" />
-      <FileImport v-if="currentWidget?.name === 'query'" />
+      <FileImport v-if="currentWidget?.name === 'import'" />
       <Measure v-if="currentWidget?.name === 'measure'" />
       <VideoManager v-if="currentWidget?.name === 'videomanager'" />
     </div>

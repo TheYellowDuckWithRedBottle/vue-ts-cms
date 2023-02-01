@@ -24,7 +24,7 @@ export default defineComponent({
       var map = L.map('map', {
         attributionControl: false,
         zoomControl: false
-      }).setView([119, 32], 18)
+      }).setView([31, 119], 6)
       provide('map', map)
       window.map = map
       var zoomControl = L.control.zoom({ position: 'bottomright' })
@@ -36,14 +36,28 @@ export default defineComponent({
       pos.addTo(map)
       map.addControl(zoomControl)
       map.addControl(scaleControl)
-      let dynamicLayer = dynamicMapLayer({
-        url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
-        opacity: 0.8,
-        f: 'json'
-      })
-      map.addLayer(dynamicLayer)
-
-      //map.on('mouseover', onMapMove)
+      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 18});
+      map.addLayer(osm);
+      // let dynamicLayer = dynamicMapLayer({
+      //   url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
+      //   opacity: 0.8,
+      //   f: 'json'
+      // })
+      // map.addLayer(dynamicLayer)
+      map.on('mouseover', onMapMove)
+      var marker = L.marker([31, 119]).addTo(map);
+      var circle = L.circle([31, 119], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 500
+        }).addTo(map);
+        var polygon = L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+          ]).addTo(map);
     })
     function onMapMove(e) {
       console.log(e.latlng)

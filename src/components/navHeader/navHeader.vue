@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { ref } from 'vue'
-// import testCom from './testCom.vue'
+import testCom from './testCom.vue'
 export default {
   components: {
     // testCom
