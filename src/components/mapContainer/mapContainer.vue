@@ -30,6 +30,8 @@ export default defineComponent({
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })
+      var tidiMapKey = "8a6487303f4e0c7ca66b8a99d195468d"
+
       // 添加位置控件,添加放大缩小控件,添加比例尺控件
       pos.addTo(map)
       map.addControl(zoomControl)
