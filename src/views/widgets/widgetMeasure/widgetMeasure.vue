@@ -9,10 +9,56 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script>
+import { defineComponent, ref, getCurrentInstance, reactive } from 'vue'
 export default defineComponent({
   setup() {
+    let instance = getCurrentInstance()
+    let L = {}
+    let map = {}
+    let state = reactive({
+      points: [],
+      lines: {},
+      tempLines: {},
+      geometry: []
+    })
+
+    if(instance !== null) {
+      console.log(instance.appContext.config.globalProperties.$map)
+      L = instance.appContext.config.globalProperties.$L
+      map = instance.appContext.config.globalProperties.$map
+      console.log(L,map)
+      state.lines = new L.polyline(state.points)
+      state.tempLines = new L.polyline([])
+      map.on('click', onClick)    
+      map.on('dblclick',onDoubleClick)
+    }
+    function onClick (e) {
+      console.log(e)
+      const newPoint = [e.latlng.lat, e.latlng.lng]
+      state.points.push(newPoint)
+      state.lines.addLatLng(e.latlng)
+      map.addLayer(state.lines)
+      map.on('mousemove', onMove)
+    }
+    function onDoubleClick (e) {
+      console.log(e)
+      state.geometry.push(L.polyline(state.points).addTo(map))
+      state.points = []
+      state.lines.remove()
+      map.off('mousemove')
+      state.tempLines.remove()
+    }
+    function onMove (e) {
+      if(state.points.length > 0) {
+        const lastPoint = state.points[state.points.length -1]
+        const newPoint = [e.latlng.lat, e.latlng.lng]
+        let ls = [lastPoint,newPoint]
+        state.tempLines.setLatLngs(ls)
+        map.addLayer(state.tempLines)
+      }
+    }
+    
     function measuerLength () {
       console.log('测量长度')
     }
