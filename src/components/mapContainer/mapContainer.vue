@@ -20,6 +20,9 @@ export default defineComponent({
   setup() {
     onMounted(() => {
       const instance = getCurrentInstance()
+      debugger
+      
+      
       positionControl()
       var map = L.map('map', {
         attributionControl: false,
@@ -31,6 +34,8 @@ export default defineComponent({
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })
       var tidiMapKey = "8a6487303f4e0c7ca66b8a99d195468d"
+      instance.appContext.config.globalProperties.$map =  map
+      instance.appContext.config.globalProperties.$L =  L
 
       // 添加位置控件,添加放大缩小控件,添加比例尺控件
       pos.addTo(map)
