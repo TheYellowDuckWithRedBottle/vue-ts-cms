@@ -30,12 +30,11 @@ export default defineComponent({
       console.log(L,map)
       state.lines = new L.polyline(state.points)
       state.tempLines = new L.polyline([])
-      map.on('click', onClick)    
-      map.on('dblclick',onDoubleClick)
+
     }
-    function onClick (e) {
-      console.log(e)
+    function onClickLength (e) {
       const newPoint = [e.latlng.lat, e.latlng.lng]
+      debugger
       state.points.push(newPoint)
       state.lines.addLatLng(e.latlng)
       map.addLayer(state.lines)
@@ -47,6 +46,12 @@ export default defineComponent({
       state.points = []
       state.lines.remove()
       map.off('mousemove')
+      map.off('click', onClickLength)
+      map.off('mousermove', onMove)
+      const body = document.querySelector('body')
+      body.style.cursor = 'pointer'
+      const mapContainer = document.getElementById('map')
+      mapContainer.style.cursor = "pointer"
       state.tempLines.remove()
     }
     function onMove (e) {
@@ -58,12 +63,32 @@ export default defineComponent({
         map.addLayer(state.tempLines)
       }
     }
-    
+
     function measuerLength () {
       console.log('测量长度')
+      const mapContainer = document.getElementById('map')
+      mapContainer.style.cursor = "crosshair"
+      const body = document.querySelector('body')
+      body.style.cursor = 'crosshair'
+      map.on('click', onClickLength)
+      map.on('dblclick',onDoubleClick)
+    }
+    function onClickArea (e) {
+      console.log(e)
+      const newPoint = [e.latlng.lat, e.latlng.lng]
+      state.points.push(newPoint)
+      state.lines.addLatLng(e.latlng)
+      map.addLayer(state.lines)
+      map.on('mousemove', onMove)
     }
     function measureArea () {
       console.log('测量面积')
+      const mapContainer = document.getElementById('map')
+      mapContainer.style.cursor = "crosshair"
+      const body = document.querySelector('body')
+      body.style.cursor = 'crosshair'
+      map.on('click', onClickArea)
+      map.on('dblclick',onDoubleClick)
     }
     return {measuerLength, measureArea}
   }
