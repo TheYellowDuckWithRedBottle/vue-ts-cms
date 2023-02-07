@@ -5,12 +5,16 @@
         <el-button type="primary" @click="measureArea" size="small">面积</el-button>
       </div>
       <div class="operate-divider"></div>
-      <div class="block-list-container"></div>
+      <div class="block-list-container">
+        <div v-for="(item, index) in resultList" :key = index>
+           地块信息{{ item.info }}
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, getCurrentInstance, reactive } from 'vue'
+import { defineComponent, toRefs, getCurrentInstance, reactive } from 'vue'
 export default defineComponent({
   setup() {
     let instance = getCurrentInstance()
@@ -19,40 +23,50 @@ export default defineComponent({
     let state = reactive({
       points: [],
       lines: {},
+      lineArray: [],
       tempLines: {},
-      geometry: []
+      geometry: [],
+      distance: 0,
+      resultList: []
     })
 
     if(instance !== null) {
       console.log(instance.appContext.config.globalProperties.$map)
       L = instance.appContext.config.globalProperties.$L
       map = instance.appContext.config.globalProperties.$map
-      console.log(L,map)
       state.lines = new L.polyline(state.points)
       state.tempLines = new L.polyline([])
 
     }
     function onClickLength (e) {
       const newPoint = [e.latlng.lat, e.latlng.lng]
-      debugger
       state.points.push(newPoint)
+      if (state.points.length > 1) {
+        const currentDistance = map.distance(state.points[state.points.length -2], newPoint)
+        state.distance += currentDistance
+        console.log(state.distance)
+      }
       state.lines.addLatLng(e.latlng)
       map.addLayer(state.lines)
       map.on('mousemove', onMove)
     }
     function onDoubleClick (e) {
       console.log(e)
-      state.geometry.push(L.polyline(state.points).addTo(map))
+      const tempGeometry = L.polyline(state.points).addTo(map)
+      state.geometry.push(tempGeometry)
+      state.resultList.push({
+        geometry: tempGeometry,
+        info: (state.distance).toFixed(2)
+      })
+      state.distance = 0
       state.points = []
       state.lines.remove()
       map.off('mousemove')
       map.off('click', onClickLength)
       map.off('mousermove', onMove)
-      const body = document.querySelector('body')
-      body.style.cursor = 'pointer'
-      const mapContainer = document.getElementById('map')
-      mapContainer.style.cursor = "pointer"
+      changeMouseStyle("pointer")
       state.tempLines.remove()
+      console.log(state.geometry)
     }
     function onMove (e) {
       if(state.points.length > 0) {
@@ -60,18 +74,21 @@ export default defineComponent({
         const newPoint = [e.latlng.lat, e.latlng.lng]
         let ls = [lastPoint,newPoint]
         state.tempLines.setLatLngs(ls)
+        // const distance =  map.distance(lastPoint,newPoint)
+        // console.log(distance)
         map.addLayer(state.tempLines)
       }
     }
 
     function measuerLength () {
-      console.log('测量长度')
-      const mapContainer = document.getElementById('map')
-      mapContainer.style.cursor = "crosshair"
-      const body = document.querySelector('body')
-      body.style.cursor = 'crosshair'
+      changeMouseStyle("crosshair")
+      state.lines = new L.polyline(state.points)
       map.on('click', onClickLength)
       map.on('dblclick',onDoubleClick)
+    }
+    function changeMouseStyle (style) {
+      const mapContainer = document.getElementById('map')
+      mapContainer.style.cursor = style
     }
     function onClickArea (e) {
       console.log(e)
@@ -90,7 +107,7 @@ export default defineComponent({
       map.on('click', onClickArea)
       map.on('dblclick',onDoubleClick)
     }
-    return {measuerLength, measureArea}
+    return {measuerLength, measureArea, ...toRefs(state)}
   }
 })
 </script>
