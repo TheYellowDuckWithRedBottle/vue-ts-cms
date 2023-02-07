@@ -40,6 +40,7 @@ export default defineComponent({
     }
     function onClickLength (e) {
       const newPoint = [e.latlng.lat, e.latlng.lng]
+      debugger
       state.points.push(newPoint)
       if (state.points.length > 1) {
         const currentDistance = map.distance(state.points[state.points.length -2], newPoint)
