@@ -20,6 +20,7 @@ export default defineComponent({
     let instance = getCurrentInstance()
     let L = {}
     let map = {}
+    let style = {color: '#fc6a00', fillColor: '#fc6a00', fillOpacity: 0.2}
     let state = reactive({
       points: [],
       lines: {},
@@ -27,6 +28,12 @@ export default defineComponent({
       tempLines: {},
       geometry: [],
       distance: 0,
+
+      facelines: [],
+      faceTempLines: [],
+      facePolygonList: [],
+      polygonList: {},
+
       resultList: []
     })
 
@@ -91,22 +98,42 @@ export default defineComponent({
       const mapContainer = document.getElementById('map')
       mapContainer.style.cursor = style
     }
-    function onClickArea (e) {
-      console.log(e)
-      const newPoint = [e.latlng.lat, e.latlng.lng]
-      state.points.push(newPoint)
-      state.lines.addLatLng(e.latlng)
-      map.addLayer(state.lines)
-      map.on('mousemove', onMove)
-    }
     function measureArea () {
-      console.log('测量面积')
-      const mapContainer = document.getElementById('map')
-      mapContainer.style.cursor = "crosshair"
-      const body = document.querySelector('body')
-      body.style.cursor = 'crosshair'
-      map.on('click', onClickArea)
-      map.on('dblclick',onDoubleClick)
+      changeMouseStyle('crosshair')
+      state.lines = L.polyline([], style)
+      state.tempLines = L.polyline([], style)
+      map.addLayer(state.lines)
+      map.addLayer(state.tempLines)
+      map.on('click', e => {
+        state.points.push([e.latlng.lat, e.latlng.lng])
+        state.lines.addLatLng(e.latlng)
+        map.addLayer(state.lines)
+        state.faceTempLines.push(state.lines)
+      })
+      map.on('mousemove', e => {
+        debugger
+        if (state.points.length > 0) {
+          state.tempLines.setLatLngs([state.points[state.points.length -1],[e.latlng.lat, e.latlng.lng]])
+          map.addLayer(state.tempLines)
+          state.faceTempLines.push(state.tempLines)
+        }
+      })
+      map.on('dblclick', e => {
+        state.polygonList = L.polygon([state.points], {
+          color: '#fc6a00',
+          fillColor: '#fc6a00',
+          fillOpacity: 0.2,
+        }).addTo(map)
+        debugger
+        map.addLayer(state.polygonList)
+        state.facePolygonList.push(state.polygonList)
+        state.points = []
+        state.lines.setLatLngs([])
+        map.off('click')
+        map.off('dblclick')
+        map.off('move')
+        changeMouseStyle('pointer')
+      })
     }
     return {measuerLength, measureArea, ...toRefs(state)}
   }
