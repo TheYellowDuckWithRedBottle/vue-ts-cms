@@ -3,11 +3,15 @@
     <div class="operate-buttons">
         <el-button type="primary" @click="measuerLength" size="small">长度</el-button>
         <el-button type="primary" @click="measureArea" size="small">面积</el-button>
+        <el-button type="primary" @click="clearResultList" size="small">清除</el-button>
       </div>
       <div class="operate-divider"></div>
       <div class="block-list-container">
-        <div v-for="(item, index) in resultList" :key = index>
-           地块信息{{ item.info }}
+        <div v-for="(item, index) in resultList" :key = index @click = 'exportData(item)' class="geometry-item">
+          <font-awesome-icon icon="fa-solid fa-draw-polygon" v-if="item.type === 'polygon'" />
+          <font-awesome-icon icon="fa-solid fa-grip-lines"  v-else/>
+            <span>{{  item.info }}</span>
+          <font-awesome-icon icon="fa-solid fa-file-export" />
         </div>
       </div>
   </div>
@@ -29,9 +33,8 @@ export default defineComponent({
       geometry: [],
       distance: 0,
 
-      facelines: [],
-      faceTempLines: [],
       facePolygonList: [],
+      faceTempPolygons: {},
       polygonList: {},
 
       resultList: []
@@ -58,36 +61,38 @@ export default defineComponent({
       map.addLayer(state.lines)
       map.on('mousemove', onMove)
     }
-    function onDoubleClick (e) {
-      console.log(e)
-      const tempGeometry = L.polyline(state.points).addTo(map)
-      state.geometry.push(tempGeometry)
-      state.resultList.push({
-        geometry: tempGeometry,
-        info: (state.distance).toFixed(2)
-      })
-      state.distance = 0
-      state.points = []
-      state.lines.remove()
-      map.off('mousemove')
-      map.off('click', onClickLength)
-      map.off('mousermove', onMove)
-      changeMouseStyle("pointer")
-      state.tempLines.remove()
-      console.log(state.geometry)
-    }
     function onMove (e) {
       if(state.points.length > 0) {
         const lastPoint = state.points[state.points.length -1]
         const newPoint = [e.latlng.lat, e.latlng.lng]
         let ls = [lastPoint,newPoint]
         state.tempLines.setLatLngs(ls)
-        // const distance =  map.distance(lastPoint,newPoint)
-        // console.log(distance)
         map.addLayer(state.tempLines)
       }
     }
+    function onDoubleClick (e) {
+      console.log(e)
+      const tempGeometry = L.polyline(state.points).addTo(map)
+      state.geometry.push(tempGeometry)
+      state.resultList.push({
+        type: 'polyline',
+        geometry: tempGeometry,
+        info: (state.distance).toFixed(2)
+      })
+      state.distance = 0
+      state.points = []
+      state.lines.remove()
+      map.off('click', onClickLength)
+      map.off('mousermove', onMove)
+      map.off('dblclick')
+      changeMouseStyle("pointer")
+      state.tempLines.remove()
+      console.log(state.geometry)
+    }
 
+    function exportData (resultItem) {
+      console.log(resultItem.geometry.toGeoJSON())
+    }
     function measuerLength () {
       changeMouseStyle("crosshair")
       state.lines = new L.polyline(state.points)
@@ -97,6 +102,9 @@ export default defineComponent({
     function changeMouseStyle (style) {
       const mapContainer = document.getElementById('map')
       mapContainer.style.cursor = style
+    }
+    function clearResultList () {
+      state.resultList = []
     }
     function measureArea () {
       changeMouseStyle('crosshair')
@@ -108,34 +116,41 @@ export default defineComponent({
         state.points.push([e.latlng.lat, e.latlng.lng])
         state.lines.addLatLng(e.latlng)
         map.addLayer(state.lines)
-        state.faceTempLines.push(state.lines)
       })
       map.on('mousemove', e => {
-        debugger
         if (state.points.length > 0) {
           state.tempLines.setLatLngs([state.points[state.points.length -1],[e.latlng.lat, e.latlng.lng]])
-          map.addLayer(state.tempLines)
-          state.faceTempLines.push(state.tempLines)
+          // map.addLayer(state.tempLines)
+          if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
+            map.removeLayer(state.faceTempPolygons)
+          }
+          const tempPoints = state.points.concat(e.latlng)
+          state.faceTempPolygons = new L.polygon(tempPoints,style)
+          map.addLayer(state.faceTempPolygons)
         }
       })
       map.on('dblclick', e => {
-        state.polygonList = L.polygon([state.points], {
-          color: '#fc6a00',
-          fillColor: '#fc6a00',
-          fillOpacity: 0.2,
-        }).addTo(map)
-        debugger
+        state.polygonList = L.polygon([state.points], style).addTo(map)
+        if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
+          map.removeLayer(state.faceTempPolygons)
+        }
+        state.resultList.push (
+          {
+            type: 'polygon',
+            geometry: state.polygonList,
+            info: 0
+          }
+        )
         map.addLayer(state.polygonList)
         state.facePolygonList.push(state.polygonList)
         state.points = []
-        state.lines.setLatLngs([])
         map.off('click')
         map.off('dblclick')
         map.off('move')
         changeMouseStyle('pointer')
       })
     }
-    return {measuerLength, measureArea, ...toRefs(state)}
+    return {measuerLength, measureArea, ...toRefs(state),exportData,clearResultList}
   }
 })
 </script>
@@ -163,5 +178,10 @@ export default defineComponent({
   .block-list-container {
     width: 100%;
     height: calc(100% - 51px);
+    .geometry-item {
+      width: 100%;
+      height: 30px;
+      display: flex;
+    }
   }
 </style>
