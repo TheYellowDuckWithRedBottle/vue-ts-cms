@@ -11,7 +11,9 @@ import {
   faEye,
   faTrash,
   faGear,
-  faCircle
+  faCircle,
+  faDrawPolygon,
+  faFileImport
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -33,6 +35,8 @@ library.add(faEye)
 library.add(faGear)
 library.add(faTrash)
 library.add(faCircle)
+library.add(faDrawPolygon)
+library.add(faFileImport)
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
