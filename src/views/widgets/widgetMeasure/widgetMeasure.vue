@@ -7,11 +7,16 @@
       </div>
       <div class="operate-divider"></div>
       <div class="block-list-container">
-        <div v-for="(item, index) in resultList" :key = index @click = 'exportData(item)' class="geometry-item">
-          <font-awesome-icon icon="fa-solid fa-draw-polygon" v-if="item.type === 'polygon'" />
-          <font-awesome-icon icon="fa-solid fa-grip-lines"  v-else/>
+        <div v-for="(item, index) in resultList" :key = "index" class="geometry-item">
+          <div>
+            <font-awesome-icon icon="fa-solid fa-draw-polygon" class="icon" v-if="item.type === 'polygon'" />
+            <font-awesome-icon icon="fa-solid fa-grip-lines" class="icon"  v-else/>
             <span>{{  item.info }}</span>
-          <font-awesome-icon icon="fa-solid fa-file-export" />
+          </div>
+          <div>
+              <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportBlock(item)"/>
+              <font-awesome-icon icon="fa-solid fa-trash" class="icon" @click="clearBlock(item)"/>
+          </div>
         </div>
       </div>
   </div>
@@ -19,6 +24,9 @@
 
 <script>
 import { defineComponent, toRefs, getCurrentInstance, reactive } from 'vue'
+import turfArea from '@turf/area'
+import turfCenter from '@turf/center'
+import {point} from '@turf/helpers'
 export default defineComponent({
   setup() {
     let instance = getCurrentInstance()
@@ -33,7 +41,6 @@ export default defineComponent({
       geometry: [],
       distance: 0,
 
-      facePolygonList: [],
       faceTempPolygons: {},
       polygonList: {},
 
@@ -46,11 +53,16 @@ export default defineComponent({
       map = instance.appContext.config.globalProperties.$map
       state.lines = new L.polyline(state.points)
       state.tempLines = new L.polyline([])
-
+    }
+    // ===== 测量长度 =========
+    function measuerLength () {
+      changeMouseStyle("crosshair")
+      state.lines = new L.polyline(state.points)
+      map.on('click', onClickLength)
+      map.on('dblclick',onDoubleClick)
     }
     function onClickLength (e) {
       const newPoint = [e.latlng.lat, e.latlng.lng]
-      debugger
       state.points.push(newPoint)
       if (state.points.length > 1) {
         const currentDistance = map.distance(state.points[state.points.length -2], newPoint)
@@ -71,56 +83,85 @@ export default defineComponent({
       }
     }
     function onDoubleClick (e) {
-      console.log(e)
       const tempGeometry = L.polyline(state.points).addTo(map)
-      state.geometry.push(tempGeometry)
       state.resultList.push({
         type: 'polyline',
         geometry: tempGeometry,
-        info: (state.distance).toFixed(2)
+        info: (state.distance).toFixed(2) + '米'
       })
       state.distance = 0
       state.points = []
       state.lines.remove()
       map.off('click', onClickLength)
-      map.off('mousermove', onMove)
-      map.off('dblclick')
+      map.off('mousemove', onMove)
+      map.off('dblclick',onDoubleClick)
       changeMouseStyle("pointer")
       state.tempLines.remove()
-      console.log(state.geometry)
     }
-
-    function exportData (resultItem) {
+    function exportAllBlocks () {
+      debugger
+    }
+    // 导出单个地块
+    function exportBlock (resultItem) {
       console.log(resultItem.geometry.toGeoJSON())
     }
-    function measuerLength () {
-      changeMouseStyle("crosshair")
-      state.lines = new L.polyline(state.points)
-      map.on('click', onClickLength)
-      map.on('dblclick',onDoubleClick)
-    }
+    // 改变鼠标样式
     function changeMouseStyle (style) {
       const mapContainer = document.getElementById('map')
       mapContainer.style.cursor = style
     }
+    // 清除单个地块
+    function clearBlock (block) {
+      const index = state.resultList.findIndex(item => {
+        return item === block
+      })
+      if (index > -1) {
+        map.removeLayer(state.resultList[index].geometry)
+        state.resultList.splice(index, 1)
+      }
+    }
+    // 清除所有地块
     function clearResultList () {
+      for (const item of state.resultList) {
+        if (item.geometry) {
+          map.removeLayer(item.geometry)
+        }
+      }
       state.resultList = []
+    }
+    // ====== 测量面积 ==========
+    function calcArea (polygon) {
+      return turfArea(polygon.toGeoJSON()).toFixed(2)
+    }
+    // ====== 计算中心点 =====
+    function calcCenter (polygon) {
+      return turfCenter(polygon.toGeoJSON())
+    }
+    /**
+     *
+     * @param {*} point geojson格式或者Point
+     * @param {*} text 添加的注记
+     */
+    function addMarker (pointParams, text) {
+      debugger
+      if(pointParams instanceof L.LatLng) {
+        pointParams = point([pointParams.lng,pointParams.lat]);
+      }
+      L.geoJSON(pointParams, {
+        pointToLayer: function (geojsonPoint, latlng) {
+          // return L.marker(latlng).addTo(map)
+          map.openPopup(text, latlng)
+          // return L.popup().setLatLng(latlng).setContent(area).openOn(map)
+        }
+      })
     }
     function measureArea () {
       changeMouseStyle('crosshair')
-      state.lines = L.polyline([], style)
-      state.tempLines = L.polyline([], style)
-      map.addLayer(state.lines)
-      map.addLayer(state.tempLines)
       map.on('click', e => {
         state.points.push([e.latlng.lat, e.latlng.lng])
-        state.lines.addLatLng(e.latlng)
-        map.addLayer(state.lines)
       })
       map.on('mousemove', e => {
         if (state.points.length > 0) {
-          state.tempLines.setLatLngs([state.points[state.points.length -1],[e.latlng.lat, e.latlng.lng]])
-          // map.addLayer(state.tempLines)
           if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
             map.removeLayer(state.faceTempPolygons)
           }
@@ -130,27 +171,35 @@ export default defineComponent({
         }
       })
       map.on('dblclick', e => {
-        state.polygonList = L.polygon([state.points], style).addTo(map)
         if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
           map.removeLayer(state.faceTempPolygons)
         }
+        state.polygonList = L.polygon([state.points], style).addTo(map)
+        const area = calcArea(state.polygonList)
+        const center = calcCenter(state.polygonList)
+        addMarker(center,area)
         state.resultList.push (
           {
             type: 'polygon',
             geometry: state.polygonList,
-            info: 0
+            info: area + '平方米'
           }
         )
         map.addLayer(state.polygonList)
-        state.facePolygonList.push(state.polygonList)
         state.points = []
         map.off('click')
+        map.off('mousemove')
         map.off('dblclick')
-        map.off('move')
         changeMouseStyle('pointer')
       })
     }
-    return {measuerLength, measureArea, ...toRefs(state),exportData,clearResultList}
+    return { ...toRefs(state),
+            measuerLength,
+            measureArea,
+            exportBlock,
+            exportAllBlocks,
+            clearBlock,
+            clearResultList}
   }
 })
 </script>
@@ -179,9 +228,17 @@ export default defineComponent({
     width: 100%;
     height: calc(100% - 51px);
     .geometry-item {
-      width: 100%;
       height: 30px;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      margin: 4px 8px;
+      border: 1px solid var(--color-primary);
+      border-radius: 6px;
     }
+  }
+  .icon {
+    padding-right: 4px;
   }
 </style>

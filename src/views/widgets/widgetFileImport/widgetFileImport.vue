@@ -18,15 +18,25 @@
       <div class="operate-divider"></div>
       <div class="block-list-container"></div>
   </div>
+  <div>
+    <el-dialog
+        v-model="dialogVisible"
+        title="导出"
+        width="30%"
+        :center="true"
+      >
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-import { defineComponent, ref, reactive, getCurrentInstance } from 'vue'
+import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
 export default defineComponent({
   setup() {
     let instance = getCurrentInstance()
     let state = reactive({
-      featureList: []
+      featureList: [],
+      dialogVisible: false
     })
 
     function handlePreview(file) {
@@ -37,17 +47,17 @@ export default defineComponent({
       if (instance && instance.ctx) {
         const inputDom = instance.ctx.$refs.uploadInput
         console.log(inputDom)
-
         // inputDom.dispatchEvent(new MouseEvent('click'))
       }
     }
     function exportFile() {
       console.log('导出')
+      state.dialogVisible = true
     }
     function clearBlocks() {
       console.log('清空')
     }
-    return {handlePreview,exportFile,clearBlocks,uploadFile}
+    return {handlePreview,exportFile,clearBlocks,uploadFile,...toRefs(state)}
   }
 })
 </script>

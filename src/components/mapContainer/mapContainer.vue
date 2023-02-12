@@ -21,8 +21,8 @@ export default defineComponent({
     onMounted(() => {
       const instance = getCurrentInstance()
       debugger
-      
-      
+
+
       positionControl()
       var map = L.map('map', {
         attributionControl: false,
