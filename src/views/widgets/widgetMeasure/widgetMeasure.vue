@@ -3,7 +3,7 @@
     <div class="operate-buttons">
         <el-button type="primary" @click="measuerLength" size="small">长度</el-button>
         <el-button type="primary" @click="measureArea" size="small">面积</el-button>
-        <el-button type="primary" @click="clearResultList" size="small">清除</el-button>
+        <el-button type="warning" @click="clearResultList" size="small">清除</el-button>
       </div>
       <div class="operate-divider"></div>
       <div class="block-list-container">
@@ -36,7 +36,6 @@ export default defineComponent({
     let state = reactive({
       points: [],
       lines: {},
-      lineArray: [],
       tempLines: {},
       geometry: [],
       distance: 0,
