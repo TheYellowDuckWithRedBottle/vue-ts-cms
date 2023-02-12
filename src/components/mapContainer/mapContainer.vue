@@ -20,9 +20,6 @@ export default defineComponent({
   setup() {
     onMounted(() => {
       const instance = getCurrentInstance()
-      debugger
-
-
       positionControl()
       var map = L.map('map', {
         attributionControl: false,
@@ -51,18 +48,6 @@ export default defineComponent({
       // })
       // map.addLayer(dynamicLayer)
       map.on('mouseover', onMapMove)
-      var marker = L.marker([31, 119]).addTo(map);
-      var circle = L.circle([31, 119], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 500
-        }).addTo(map);
-        var polygon = L.polygon([
-            [51.509, -0.08],
-            [51.503, -0.06],
-            [51.51, -0.047]
-          ]).addTo(map);
     })
     function onMapMove(e) {
       console.log(e.latlng)

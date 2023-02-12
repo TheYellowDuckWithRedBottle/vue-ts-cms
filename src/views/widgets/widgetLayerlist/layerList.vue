@@ -22,9 +22,7 @@
 </template>
 
 <script>
-import Test from './test.vue'
-import L from 'leaflet'
-import { defineComponent, ref, inject } from 'vue'
+import { defineComponent, ref, getCurrentInstance, onMounted, watch } from 'vue'
 // interface Tree {
 //   label: string
 //   service?: string
@@ -34,8 +32,20 @@ export default defineComponent({
   name: 'App',
   components: {},
   setup() {
-    let map = inject('map')
-    console.log(map)
+    let instance = getCurrentInstance()
+    let L = {}
+    let map = {}
+    // watch (L,(newValue, oldValue) => {
+    //   console.log(newValue, oldValue)
+    // })
+    onMounted(() => {
+      if(instance !== null) {
+      L = instance.appContext.config.globalProperties.$L
+      map = instance.appContext.config.globalProperties.$map
+      console.log(L,map)
+      }
+    })
+
     const treeData =([
       {
         alias: '土地利用现状',
@@ -73,12 +83,15 @@ export default defineComponent({
       }
     ])
 
-    const handleNodeClick = (e) => {
+   function handleNodeClick(e) {
       console.log(e)
     }
     const openService = (data, node) => {
       console.log(data)
       console.log(node)
+      console.log(L)
+      console.log(map)
+
       //加载wms服务的图层
       var wmsLayer = L.tileLayer.wms(
           data.service, {
