@@ -4,10 +4,6 @@
 </template>
 
 <script>
-import shpjs from 'shpjs'
-import turfCenter from '@turf/center'
-import turfArea from '@turf/area'
-import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
 import CommonAnalysisHeader from '@/views/common/CommonAnalysisHeader.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
@@ -17,6 +13,12 @@ export default defineComponent({
     CommonAnalysisHeader
   },
   setup() {
+    const exportFormats=[
+        'txt',
+        'shp',
+        'geojson',
+        'dwg'
+      ]
     let instance = getCurrentInstance()
     let L = instance.appContext.config.globalProperties.$L
     let map = instance.appContext.config.globalProperties.$map
@@ -126,5 +128,4 @@ export default defineComponent({
     // top: 100px;
   }
 }
-
 </style>
