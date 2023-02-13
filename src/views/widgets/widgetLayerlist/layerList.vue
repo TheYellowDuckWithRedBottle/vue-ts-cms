@@ -57,7 +57,7 @@ export default defineComponent({
             children: [
               {
                 alias: 'wms服务',
-                service: 'http://localhost:8090/geoserver/WMS/wms?service=WMS&version=1.1.0&request=GetMap&layers=WMS:SHP_1636427035338&bbox=4.0615005015008755E7,3532560.982614258,4.061549804877387E7,3532911.3776800316&width=768&height=545&srs=EPSG:4528&styles=&format=application/openlayers'
+                service: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map'
               },
               {
                 alias: '荥阳点服务',
@@ -86,21 +86,32 @@ export default defineComponent({
    function handleNodeClick(e) {
       console.log(e)
     }
-    const openService = (data, node) => {
-      console.log(data)
-      console.log(node)
-      console.log(L)
-      console.log(map)
-
-      //加载wms服务的图层
-      var wmsLayer = L.tileLayer.wms(
+    function openService (data, node)  {
+      if(instance !== null) {
+          L = instance.appContext.config.globalProperties.$L
+          map = instance.appContext.config.globalProperties.$map
+          console.log(L,map)
+      }
+      if(node.isCheck) {
+        var wmsLayer = L.tileLayer.wms(
           data.service, {
                 layers: 'nyc_roads',
             }
         );
         //添加图层到地图
         console.log(wmsLayer)
-        wmsLayer.addTo(window.map);
+        wmsLayer.addTo(map);
+      } else {
+        console.log('关闭服务')
+        if(map.hasLayer(wmsLayer)) {
+          map.removeLayer(wmsLayer)
+        }
+      }
+
+      if(!data.service) return
+
+      //加载wms服务的图层
+
     }
     const defaultProps = {
       children: 'children',
