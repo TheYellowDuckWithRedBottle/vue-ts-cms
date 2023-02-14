@@ -22,15 +22,13 @@ export default defineComponent({
       const instance = getCurrentInstance()
       positionControl()
       var map = L.map('map', {
+        crs: L.CRS.EPSG3857,
         attributionControl: false,
         zoomControl: false
       }).setView([31, 119], 6)
-      provide('map', map)
-      window.map = map
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })
-      var tidiMapKey = "8a6487303f4e0c7ca66b8a99d195468d"
       instance.appContext.config.globalProperties.$map =  map
       instance.appContext.config.globalProperties.$L =  L
 
@@ -39,7 +37,7 @@ export default defineComponent({
       map.addControl(zoomControl)
       map.addControl(scaleControl)
       var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 18});
+      var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
       map.addLayer(osm);
       // let dynamicLayer = dynamicMapLayer({
       //   url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
@@ -47,7 +45,7 @@ export default defineComponent({
       //   f: 'json'
       // })
       // map.addLayer(dynamicLayer)
-      map.on('mouseover', onMapMove)
+      //map.on('mouseover', onMapMove)
     })
     function onMapMove(e) {
       console.log(e.latlng)

@@ -57,7 +57,8 @@ export default defineComponent({
             children: [
               {
                 alias: 'wms服务',
-                service: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map'
+                url: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map&',
+                service: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map&'
               },
               {
                 alias: '荥阳点服务',
@@ -87,25 +88,31 @@ export default defineComponent({
       console.log(e)
     }
     function openService (data, node)  {
+      debugger
       if(instance !== null) {
+        if(L === {} || map === {}) {
           L = instance.appContext.config.globalProperties.$L
           map = instance.appContext.config.globalProperties.$map
-          console.log(L,map)
+        }
       }
       if(node.isCheck) {
         var wmsLayer = L.tileLayer.wms(
-          data.service, {
-                layers: 'nyc_roads',
+          data.url, {
+                layers: data.alias,
+                format: 'imgage/png',
+                transparent: true
             }
         );
         //添加图层到地图
-        console.log(wmsLayer)
         wmsLayer.addTo(map);
+        wmsLayer.bringToFront();
       } else {
-        console.log('关闭服务')
-        if(map.hasLayer(wmsLayer)) {
-          map.removeLayer(wmsLayer)
-        }
+        map.eachLayer(function(layer) {
+          console.log(layer)
+          if(layer.options && layer.options.layers === data.alias) {
+            map.removeLayer(layer)
+          }
+        })
       }
 
       if(!data.service) return
