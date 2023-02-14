@@ -32,10 +32,6 @@ export default defineComponent({
     let state = reactive({
     })
 
-    return {
-            ...toRefs(state),
-          }
-  }
 })
 </script>
 

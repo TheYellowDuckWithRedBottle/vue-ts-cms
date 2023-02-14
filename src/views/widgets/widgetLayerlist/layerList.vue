@@ -89,6 +89,7 @@ export default defineComponent({
       console.log(e)
     }
     function openService (data, node)  {
+      debugger
       if(instance !== null) {
         if(Object.keys(L).length == 0) {
           L = instance.appContext.config.globalProperties.$L

@@ -30,8 +30,11 @@
     "less-loader": "^5.0.0",
     "node-sass": "^7.0.3",
     "normalize.css": "^8.0.1",
+<<<<<<< HEAD
     "proj4": "^2.8.1",
     "proj4leaflet": "^1.0.2",
+=======
+>>>>>>> 9b4d8b2... feat(import): 添加文件导入以及闪烁的功能
     "shp-write": "^0.3.2",
     "shpjs": "^4.0.4",
     "style-loader": "^3.3.1",
