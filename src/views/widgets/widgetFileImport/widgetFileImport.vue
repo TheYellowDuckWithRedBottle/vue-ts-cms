@@ -3,21 +3,15 @@
       <div class="operate-buttons">
         <el-button size="small" type="primary" class="file-button" @click="uploadFile">导入</el-button>
         <input type="file" style="display: none;" ref="uploadInput" @change="handlePreview">
-        <!-- <el-upload
-        ref = "uploadInput"
-        v-show = "false"
-    :on-preview="handlePreview"
-    :on-remove="handleRemove"
-    :before-remove="beforeRemove"
-    :limit="3"
-    :on-exceed="handleExceed"
-  >
-  </el-upload> -->
         <el-button type="success" @click="exportFile" size="small" class="file-button">导出</el-button>
         <el-button type="warning" @click="clearBlocks" size="small" class="file-button">清空</el-button>
       </div>
       <div class="operate-divider"></div>
-      <div class="block-list-container"></div>
+      <div class="block-list-container">
+        <div v-for="(item, index) in featureList" :key="index" @click="loacateBlock(item.geoJson)">
+          {{ item.title }}
+        </div>
+      </div>
   </div>
   <div>
     <el-dialog
@@ -45,6 +39,8 @@
 </template>
 
 <script>
+import shpjs from 'shpjs'
+import turfCenter from '@turf/center'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
 export default defineComponent({
   setup() {
@@ -55,15 +51,83 @@ export default defineComponent({
         'dwg'
       ]
     let instance = getCurrentInstance()
+    let L = instance.appContext.config.globalProperties.$L
+    let map = instance.appContext.config.globalProperties.$map
     const exportFormat = ref('')
     let state = reactive({
       featureList: [],
       dialogVisible: false
     })
+    // 让图斑闪烁多次
+    // function flashBlock(geoJson) {
+    //   const layer = L.geoJSON(geoJson).addTo(map);
+    //   layer.setStyle({
+    //     color: '#ff0000',
+    //     weight: 3,
+    //     opacity: 1,
+    //     fillOpacity: 0.5
+    //   })
+    //   setTimeout(() => {
+    //     map.removeLayer(layer)
+    //   }, 100)
+    // }
+    function flashBlockOnce(geoJson) {
+      const layer = L.geoJSON(geoJson).addTo(map);
+      layer.setStyle({
+        color: '#ff0000',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 0.5
+      })
+     setTimeout(() => {
+        map.removeLayer(layer)
+      }, 100)
+    }
+    function flashBlock (geoJson) {
+      let intervalTag = 0
+      setInterval(() => {
+        if(intervalTag === 3) {
+          clearInterval(intervalTag)
+          return
+        }
+        intervalTag++
+        flashBlockOnce(geoJson)
+      }, 300)
 
+    }
+    function loacateBlock(geoJson) {
+      flashBlock(geoJson)
+      const center = turfCenter(geoJson)
+      const latlng = center.geometry.coordinates.reverse()
+      map.setView(latlng, 16)
+    }
     function handlePreview() {
       const file = instance.ctx.$refs.uploadInput.files
       console.log('导入',file)
+      let reader = new FileReader()
+      reader.readAsArrayBuffer(file[0])
+      reader.onload  = function (e) {
+        let res = e.target.result
+        console.log(res)
+        shpjs.parseZip(res).then((parsedResult) => {
+          console.log(parsedResult)
+          if(parsedResult.type === 'FeatureCollection') {
+            debugger
+            loacateBlock(parsedResult)
+            for(const index in parsedResult.features) {
+              const geoJson = parsedResult.features[index]
+              const resultItem = {
+                title: '图斑'+index,
+                type: geoJson.type,
+                properties: geoJson.properties,
+                geoJson: geoJson
+              }
+              state.featureList.push(resultItem)
+              L.geoJSON(geoJson).addTo(map);
+            }
+          }
+        })
+      }
     }
     function uploadFile() {
       if (instance && instance.ctx) {
@@ -95,6 +159,7 @@ export default defineComponent({
             clearBlocks,
             uploadFile,
             changeFormat,
+            loacateBlock,
             ...toRefs(state),
             exportFormats,
             exportConfirm
@@ -129,6 +194,7 @@ export default defineComponent({
   .block-list-container {
     width: 100%;
     height: calc(100% - 51px);
+    overflow: auto;
   }
 }
 .format-wrapper {
