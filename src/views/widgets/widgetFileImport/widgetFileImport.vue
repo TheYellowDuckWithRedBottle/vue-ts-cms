@@ -8,69 +8,38 @@
       </div>
       <div class="operate-divider"></div>
       <div class="block-list-container">
-        <div v-for="(item, index) in featureList" :key="index" @click="loacateBlock(item.geoJson)">
-          {{ item.title }}
+        <div v-for="(item, index) in featureList" :key="index"
+          class="geometry-item"
+          @click="loacateBlock(item.geoJson)">
+          <span class="item-title">{{ item.title }}</span>
+          <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportFile(item)"/>
         </div>
       </div>
   </div>
-  <div>
-    <el-dialog
-        v-model="dialogVisible"
-        title="选择导出格式"
-        width="300px"
-        height="600px"
-      >
-      <div class="format-wrapper">
-        <span class="select-label">选择格式：</span>
-       <el-select v-model="exportFormat" @change="changeFormat"  placeholder="导出格式" size="small" class="select-container">
-        <el-option
-            v-for="(item, index) in exportFormats"
-            :key="index"
-            :label="item"
-            :value="item"/>
-            {{ item }}
-        </el-select>
-      </div>
-      <div class="export-button">
-        <el-button type="primary" @click = "exportConfirm" size="small">确定导出</el-button>
-      </div>
-    </el-dialog>
-  </div>
+  <ExoportData :dialogVisible="dialogVisible" :exportData="exportData" @closeDialog="closeExportCom"/>
 </template>
 
 <script>
 import shpjs from 'shpjs'
 import turfCenter from '@turf/center'
+import { ElMessage } from 'element-plus'
+import ExoportData from '@/views/common/ExportData.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
 export default defineComponent({
+  components: {
+    ExoportData
+  },
   setup() {
-    const exportFormats=[
-        'txt',
-        'shp',
-        'geojson',
-        'dwg'
-      ]
     let instance = getCurrentInstance()
     let L = instance.appContext.config.globalProperties.$L
     let map = instance.appContext.config.globalProperties.$map
     const exportFormat = ref('')
     let state = reactive({
       featureList: [],
-      dialogVisible: false
+      dialogVisible: false,
+      exportData: {}
     })
-    // 让图斑闪烁多次
-    // function flashBlock(geoJson) {
-    //   const layer = L.geoJSON(geoJson).addTo(map);
-    //   layer.setStyle({
-    //     color: '#ff0000',
-    //     weight: 3,
-    //     opacity: 1,
-    //     fillOpacity: 0.5
-    //   })
-    //   setTimeout(() => {
-    //     map.removeLayer(layer)
-    //   }, 100)
-    // }
+    // ======= 闪烁定位地块 =======
     function flashBlockOnce(geoJson) {
       const layer = L.geoJSON(geoJson).addTo(map);
       layer.setStyle({
@@ -93,7 +62,6 @@ export default defineComponent({
         intervalTag++
         flashBlockOnce(geoJson)
       }, 300)
-
     }
     function loacateBlock(geoJson) {
       flashBlock(geoJson)
@@ -101,19 +69,20 @@ export default defineComponent({
       const latlng = center.geometry.coordinates.reverse()
       map.setView(latlng, 16)
     }
+    // ======= 导入地块 =======
     function handlePreview() {
       const file = instance.ctx.$refs.uploadInput.files
-      console.log('导入',file)
       let reader = new FileReader()
       reader.readAsArrayBuffer(file[0])
       reader.onload  = function (e) {
         let res = e.target.result
-        console.log(res)
-        shpjs.parseZip(res).then((parsedResult) => {
+        try {
+          shpjs.parseZip(res).then((parsedResult) => {
           console.log(parsedResult)
           if(parsedResult.type === 'FeatureCollection') {
             debugger
             loacateBlock(parsedResult)
+            const layers = []
             for(const index in parsedResult.features) {
               const geoJson = parsedResult.features[index]
               const resultItem = {
@@ -123,10 +92,22 @@ export default defineComponent({
                 geoJson: geoJson
               }
               state.featureList.push(resultItem)
-              L.geoJSON(geoJson).addTo(map);
+              const layer = L.geoJSON(geoJson)
+              layers.push(layer)
+            }
+            if(layers.length > 0) {
+              const layerGroup = L.layerGroup(layers)
+              console.log(layerGroup)
+              map.addLayer(layerGroup)
             }
           }
         })
+        } catch (error) {
+          ElMessage({
+          message: error,
+          type: 'error'
+        })
+        }
       }
     }
     function uploadFile() {
@@ -137,13 +118,37 @@ export default defineComponent({
         inputDom.dispatchEvent(evt)
       }
     }
-    function changeFormat (format) {
-      exportFormat.value = format
-      debugger
-
-    }
-    function exportFile() {
+    // ======= 导出地块 =======
+    function exportFile(item) {
+      if (state.featureList.length === 0) {
+        ElMessage({
+          message: '当前没有导入的地块',
+          type: 'warning'
+        })
+        return
+      }
+      if (item && item.geoJson) {
+        state.exportData = item.geoJson
+      } else {
+        state.exportData = state.featureList
+      }
       state.dialogVisible = true
+    }
+    // ======= 清空地块 =======
+    function clearBlocks() {
+      if (state.featureList.length === 0) {
+        ElMessage({
+          message: '当前没有导入的地块',
+          type: 'warning'
+        })
+        return
+      }
+      state.featureList = []
+      map.eachLayer((layer) => {
+        if(layer instanceof L.LayerGroup) {
+          map.removeLayer(layer)
+        }
+      })
     }
     function exportConfirm () {
       const data = {
@@ -151,18 +156,18 @@ export default defineComponent({
         GeoJSON: ''
       }
     }
-    function clearBlocks() {
-      console.log('清空')
+    function closeExportCom() {
+      state.dialogVisible = false
     }
+
     return {handlePreview,
             exportFile,
             clearBlocks,
             uploadFile,
-            changeFormat,
             loacateBlock,
             ...toRefs(state),
-            exportFormats,
-            exportConfirm
+            exportConfirm,
+            closeExportCom
           }
   }
 })
@@ -195,29 +200,28 @@ export default defineComponent({
     width: 100%;
     height: calc(100% - 51px);
     overflow: auto;
+    .geometry-item {
+      width: 90%;
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+      box-sizing: border-box;
+      border-bottom: 1px solid var(--color-primary);
+      .item-title {
+        font-size: 12px;
+        color: var(--color-primary);
+      }
+    }
+    .geometry-item:hover {
+        background: var(--color-primary);
+        cursor: pointer;
+        .item-title {
+          color: var(--color-white);
+        }
+      }
   }
 }
-.format-wrapper {
-  display: flex;
-  align-items: center;
-  .select-label {
-    display: inline-block;
-    width: 40%;
-  }
-  .select-container {
 
-  }
-}
-::v-deep .el-dialog__body {
-  padding: 8px;
-}
-::v-deep .el-dialog__header {
-  font-size: 12px;
-}
-.export-button {
-  display: flex;
-  justify-content: center;
-  right: 8px;
-  margin-top: 8px;
-}
 </style>
