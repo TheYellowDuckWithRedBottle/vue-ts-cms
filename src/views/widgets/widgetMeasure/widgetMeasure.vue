@@ -20,6 +20,7 @@
         </div>
       </div>
   </div>
+  <ExoportData :dialogVisible="dialogVisible" :exportData="exportData" @closeDialog="closeExportCom"/>
 </template>
 
 <script>
@@ -27,13 +28,21 @@ import { defineComponent, toRefs, getCurrentInstance, reactive } from 'vue'
 import turfArea from '@turf/area'
 import turfCenter from '@turf/center'
 import {point} from '@turf/helpers'
+import { ElMessage } from 'element-plus'
+import ExoportData from '@/views/common/ExportData.vue'
 export default defineComponent({
+  components: {
+    ExoportData
+  },
   setup() {
     let instance = getCurrentInstance()
     let L = {}
     let map = {}
     let style = {color: '#fc6a00', fillColor: '#fc6a00', fillOpacity: 0.2}
     let state = reactive({
+      dialogVisible: false,
+      exportData: {},
+
       points: [],
       lines: {},
       tempLines: {},
@@ -52,6 +61,9 @@ export default defineComponent({
       map = instance.appContext.config.globalProperties.$map
       state.lines = new L.polyline(state.points)
       state.tempLines = new L.polyline([])
+    }
+    function closeExportCom () {
+      state.dialogVisible = false
     }
     // ===== 测量长度 =========
     function measuerLength () {
@@ -102,7 +114,9 @@ export default defineComponent({
     }
     // 导出单个地块
     function exportBlock (resultItem) {
+      state.dialogVisible = true
       console.log(resultItem.geometry.toGeoJSON())
+      state.exportData = resultItem.geometry.toGeoJSON()
     }
     // 改变鼠标样式
     function changeMouseStyle (style) {
@@ -121,6 +135,12 @@ export default defineComponent({
     }
     // 清除所有地块
     function clearResultList () {
+      if(state.resultList.length === 0) {
+        ElMessage({
+          message: '当前没有可以清楚的图形',
+          type: 'warning'
+        })
+      }
       for (const item of state.resultList) {
         if (item.geometry) {
           map.removeLayer(item.geometry)
@@ -193,6 +213,7 @@ export default defineComponent({
       })
     }
     return { ...toRefs(state),
+            closeExportCom,
             measuerLength,
             measureArea,
             exportBlock,
