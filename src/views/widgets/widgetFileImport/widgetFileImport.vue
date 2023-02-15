@@ -13,12 +13,6 @@ export default defineComponent({
     CommonAnalysisHeader
   },
   setup() {
-    const exportFormats=[
-        'txt',
-        'shp',
-        'geojson',
-        'dwg'
-      ]
     let instance = getCurrentInstance()
     let L = instance.appContext.config.globalProperties.$L
     let map = instance.appContext.config.globalProperties.$map
