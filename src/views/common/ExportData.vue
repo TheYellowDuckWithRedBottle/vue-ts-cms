@@ -27,8 +27,10 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
+import shpwrite from 'shpjs'
 import { defineComponent, ref, toRefs, reactive } from 'vue'
+import FileSave from 'file-saver'
 import axios from 'axios'
 export default defineComponent({
   props: {
@@ -53,8 +55,40 @@ export default defineComponent({
       console.log('exportConfirm')
       console.log(state.exportFormat)
       console.log(props.exportData)
+      debugger
+      switch (state.exportFormat) {
+        case 'txt':
+
+          break;
+        case 'shp':
+          // eslint-disable-next-line no-case-declarations
+          const options = {
+            folder: 'shapefile',
+            types: {
+              point: 'point',
+              polygon: 'polygon',
+              line: 'polyline'
+            }
+          }
+          console.log(shpwrite)
+          shpwrite.zip(props.exportData, options).then((content) => {
+            console.log(content)
+          })
+          break;
+        case 'geojson':
+          // eslint-disable-next-line no-case-declarations
+          const data = JSON.stringify(props.exportData)
+          // eslint-disable-next-line no-case-declarations
+          const blob = new Blob([data], { type: 'text/plain;charset=utf-8' })
+          FileSave.saveAs(blob, 'geojson.json')
+          break;
+        case 'dwg':
+          break;
+        default:
+          break;
+      }
     }
-    function changeFormat (item: string) {
+    function changeFormat (item) {
       console.log(item)
     }
     return {
