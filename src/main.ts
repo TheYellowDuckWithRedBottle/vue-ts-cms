@@ -15,7 +15,8 @@ import {
   faDrawPolygon,
   faFileImport,
   faFileExport,
-  faGripLines
+  faGripLines,
+  faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -41,6 +42,7 @@ library.add(faDrawPolygon)
 library.add(faFileImport)
 library.add(faFileExport)
 library.add(faGripLines)
+library.add(faInfoCircle)
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
