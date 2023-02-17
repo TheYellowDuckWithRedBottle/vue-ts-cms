@@ -12,8 +12,24 @@
           class="geometry-item"
           @click="loacateBlock(item.geoJson)">
           <span class="item-title">{{ item.title }}</span>
-          <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportFile(item)"/>
+          <div class="item-icons">
+            <font-awesome-icon icon="fa-solid fa-circle-info" class="icon" @click="viewAttribtues(item)"/>
+            <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportFile(item)"/>
+          </div>
         </div>
+      </div>
+      <div class="attribute-table" v-if="showAttributes">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            v-for="(item, index) in tableColumns"
+            :key="index"
+            :label="item.label"
+            :prop="item.prop">
+          </el-table-column>
+        </el-table>
       </div>
   </div>
   <ExoportData :dialogVisible="dialogVisible" :exportData="exportData" @closeDialog="closeExportCom"/>
@@ -34,10 +50,20 @@ export default defineComponent({
     let L = instance.appContext.config.globalProperties.$L
     let map = instance.appContext.config.globalProperties.$map
     const exportFormat = ref('')
+    const style = ref({
+      color: '#ff0000',
+      weight: 3,
+      opacity: 1,
+      fillOpacity: 0.5
+    })
     let state = reactive({
       featureList: [],
-      dialogVisible: false,
-      exportData: {}
+      dialogVisible: false, // 导出数据弹窗
+      showAttributes: false, // 是否展示属性
+      locatedBlock: null, // 定位的地块
+      tableData: [], // 属性表数据
+      tableColumns: [], // 属性表列
+      exportData: {} // 导出的数据
     })
     // ======= 闪烁定位地块 =======
     function flashBlockOnce(geoJson) {
@@ -64,7 +90,15 @@ export default defineComponent({
       }, 300)
     }
     function loacateBlock(geoJson) {
+      // 1.闪烁
       flashBlock(geoJson)
+      // 2.变颜色
+      if(state.locatedBlock) {
+            map.removeLayer(state.locatedBlock)
+          }
+      state.locatedBlock = L.geoJSON(geoJson).addTo(map)
+      state.locatedBlock.setStyle(style.value)
+      // 3.定位到中心点
       const center = turfCenter(geoJson)
       const latlng = center.geometry.coordinates.reverse()
       map.setView(latlng, 16)
@@ -134,6 +168,25 @@ export default defineComponent({
       }
       state.dialogVisible = true
     }
+    // ======= 查看属性 =======
+    function viewAttribtues(item) {
+      state.showAttributes = true
+      console.log(item)
+      if(item.properties){
+        state.tableData = []
+        state.tableColumns = []
+        for(const key in item.properties) {
+          state.tableData.push({
+            key: key,
+            value: item.properties[key]
+          })
+          state.tableColumns.push({
+            title: key,
+            key: key
+          })
+        }
+      }
+    }
     // ======= 清空地块 =======
     function clearBlocks() {
       if (state.featureList.length === 0) {
@@ -167,6 +220,7 @@ export default defineComponent({
             loacateBlock,
             ...toRefs(state),
             exportConfirm,
+            viewAttribtues,
             closeExportCom
           }
   }
@@ -213,6 +267,26 @@ export default defineComponent({
         font-size: 12px;
         color: var(--color-primary);
       }
+      .item-icons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .icon {
+          width: 20px;
+          height: 20px;
+          margin-left: 5px;
+          cursor: pointer;
+          &.icon-location {
+            color: var(--color-primary);
+          }
+          &.icon-export {
+            color: var(--color-success);
+          }
+          &.icon-delete {
+            color: var(--color-danger);
+          }
+        }
+      }
     }
     .geometry-item:hover {
         background: var(--color-primary);
@@ -221,6 +295,11 @@ export default defineComponent({
           color: var(--color-white);
         }
       }
+  }
+  .attribute-table {
+    width: 100px;
+    display: flex;
+    position: absolute;
   }
 }
 
