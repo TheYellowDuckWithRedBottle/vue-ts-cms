@@ -13,22 +13,19 @@
           @click="loacateBlock(item.geoJson)">
           <span class="item-title">{{ item.title }}</span>
           <div class="item-icons">
-            <font-awesome-icon icon="fa-solid fa-circle-info" class="icon" @click="viewAttribtues(item)"/>
+            <font-awesome-icon icon="fa-solid fa-circle-info" class="icon" @click.stop="viewAttribtues(item)"/>
             <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportFile(item)"/>
           </div>
         </div>
       </div>
-      <div class="attribute-table" v-if="showAttributes">
+      <div class="attribute-table" v-show="true" ref="attributeTable">
         <el-table
           :data="tableData"
           border
+          size="mini"
           style="width: 100%">
-          <el-table-column
-            v-for="(item, index) in tableColumns"
-            :key="index"
-            :label="item.label"
-            :prop="item.prop">
-          </el-table-column>
+          <el-table-column prop="field" label="属性名" width="120" />
+          <el-table-column prop="value" label="属性值" width="200" />
         </el-table>
       </div>
   </div>
@@ -62,8 +59,8 @@ export default defineComponent({
       showAttributes: false, // 是否展示属性
       locatedBlock: null, // 定位的地块
       tableData: [], // 属性表数据
-      tableColumns: [], // 属性表列
-      exportData: {} // 导出的数据
+      exportData: {}, // 导出的数据
+      tableLayer: null // 属性表图层
     })
     // ======= 闪烁定位地块 =======
     function flashBlockOnce(geoJson) {
@@ -114,8 +111,8 @@ export default defineComponent({
           shpjs.parseZip(res).then((parsedResult) => {
           console.log(parsedResult)
           if(parsedResult.type === 'FeatureCollection') {
-            debugger
             loacateBlock(parsedResult)
+            // 合成图层组
             const layers = []
             for(const index in parsedResult.features) {
               const geoJson = parsedResult.features[index]
@@ -170,22 +167,24 @@ export default defineComponent({
     }
     // ======= 查看属性 =======
     function viewAttribtues(item) {
+      // 填充属性表
       state.showAttributes = true
-      console.log(item)
       if(item.properties){
         state.tableData = []
-        state.tableColumns = []
         for(const key in item.properties) {
           state.tableData.push({
-            key: key,
+            field: key,
             value: item.properties[key]
-          })
-          state.tableColumns.push({
-            title: key,
-            key: key
           })
         }
       }
+      loacateBlock(item.geoJson)
+      //获取弹出位置
+      const center = turfCenter(item.geoJson)
+      const latlng = center.geometry.coordinates.reverse()
+      // 获取属性表dom
+      const dom = instance.ctx.$refs.attributeTable
+      state.tableLayer = L.popup().setLatLng(latlng).setContent(dom).openOn(map)
     }
     // ======= 清空地块 =======
     function clearBlocks() {
@@ -202,6 +201,12 @@ export default defineComponent({
           map.removeLayer(layer)
         }
       })
+      // 如果导出数据弹窗打开，就关闭
+      state.dialogVisible = false
+      // 如果属性表弹窗打开，就关闭
+      if(state.tableLayer) {
+        map.removeLayer(state.tableLayer)
+      }
     }
     function exportConfirm () {
       const data = {
@@ -297,9 +302,9 @@ export default defineComponent({
       }
   }
   .attribute-table {
-    width: 100px;
     display: flex;
     position: absolute;
+    // top: 100px;
   }
 }
 

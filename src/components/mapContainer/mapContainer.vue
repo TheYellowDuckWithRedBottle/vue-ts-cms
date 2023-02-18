@@ -10,6 +10,7 @@ import L from 'leaflet'
 import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
 import 'leaflet/dist/leaflet.css'
 import mapConfig from './baseMapResource'
+import {CRS_4490,CRS_4549} from '@/global/crsDefine'
 export default defineComponent({
   props: {
     collapse: {
@@ -22,7 +23,7 @@ export default defineComponent({
       const instance = getCurrentInstance()
       positionControl()
       var map = L.map('map', {
-        crs: L.CRS.EPSG3857,
+        crs: CRS_4490,
         attributionControl: false,
         zoomControl: false
       }).setView([31, 119], 6)
