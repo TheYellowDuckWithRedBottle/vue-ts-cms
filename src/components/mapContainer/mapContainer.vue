@@ -29,7 +29,7 @@ export default defineComponent({
       const instance = getCurrentInstance()
       positionControl()
       var map = L.map('map', {
-        crs: L.CRS.EPSG3857,
+        crs: CRS_4490,
         attributionControl: false,
         zoomControl: false
       }).setView([32, 120.84], 16)
