@@ -30,6 +30,8 @@
     "less-loader": "^5.0.0",
     "node-sass": "^7.0.3",
     "normalize.css": "^8.0.1",
+    "proj4": "^2.8.1",
+    "proj4leaflet": "^1.0.2",
     "shp-write": "^0.3.2",
     "shpjs": "^4.0.4",
     "style-loader": "^3.3.1",
