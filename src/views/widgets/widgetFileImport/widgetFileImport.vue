@@ -18,7 +18,11 @@
           </div>
         </div>
       </div>
-      <div class="attribute-table" v-show="true" ref="attributeTable">
+      <div class="import-info-container">
+        <span>地块面积：{{ statisticInfo.area }} 平方米</span>
+        <span>地块个数：{{ statisticInfo.amount }} 个</span>
+      </div>
+      <div class="attribute-table" v-show="false" ref="attributeTable">
         <el-table
           :data="tableData"
           border
@@ -35,6 +39,7 @@
 <script>
 import shpjs from 'shpjs'
 import turfCenter from '@turf/center'
+import turfArea from '@turf/area'
 import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
@@ -60,7 +65,11 @@ export default defineComponent({
       locatedBlock: null, // 定位的地块
       tableData: [], // 属性表数据
       exportData: {}, // 导出的数据
-      tableLayer: null // 属性表图层
+      tableLayer: null, // 属性表图层
+      statisticInfo: {
+        area: 0,
+        amount: 0
+      }
     })
     // ======= 闪烁定位地块 =======
     function flashBlockOnce(geoJson) {
@@ -110,6 +119,9 @@ export default defineComponent({
         try {
           shpjs.parseZip(res).then((parsedResult) => {
           console.log(parsedResult)
+          console.log(turfArea(parsedResult))
+          state.statisticInfo.area += turfArea(parsedResult)
+          state.statisticInfo.amount += parsedResult.features.length
           if(parsedResult.type === 'FeatureCollection') {
             loacateBlock(parsedResult)
             // 合成图层组
@@ -128,7 +140,6 @@ export default defineComponent({
             }
             if(layers.length > 0) {
               const layerGroup = L.layerGroup(layers)
-              console.log(layerGroup)
               map.addLayer(layerGroup)
             }
           }
@@ -257,7 +268,7 @@ export default defineComponent({
   }
   .block-list-container {
     width: 100%;
-    height: calc(100% - 51px);
+    height: calc(100% - 151px);
     overflow: auto;
     .geometry-item {
       width: 90%;
@@ -300,6 +311,15 @@ export default defineComponent({
           color: var(--color-white);
         }
       }
+  }
+  .import-info-container {
+    padding: 10px;
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
   }
   .attribute-table {
     display: flex;
