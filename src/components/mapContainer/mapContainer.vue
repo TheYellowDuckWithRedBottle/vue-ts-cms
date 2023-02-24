@@ -10,6 +10,7 @@ import L from 'leaflet'
 import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
 import 'leaflet/dist/leaflet.css'
 import mapConfig from './baseMapResource'
+// import {CRS_4490} from '@/global/crsDefine'
 export default defineComponent({
   props: {
     collapse: {
@@ -19,21 +20,20 @@ export default defineComponent({
   },
   setup() {
     onMounted(() => {
+
       const instance = getCurrentInstance()
       debugger
       
       
       positionControl()
       var map = L.map('map', {
+        crs: L.CRS.EPSG3857,
         attributionControl: false,
         zoomControl: false
       }).setView([31, 119], 6)
-      provide('map', map)
-      window.map = map
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })
-      var tidiMapKey = "8a6487303f4e0c7ca66b8a99d195468d"
       instance.appContext.config.globalProperties.$map =  map
       instance.appContext.config.globalProperties.$L =  L
 
@@ -42,7 +42,7 @@ export default defineComponent({
       map.addControl(zoomControl)
       map.addControl(scaleControl)
       var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 18});
+      var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
       map.addLayer(osm);
       // let dynamicLayer = dynamicMapLayer({
       //   url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
@@ -50,19 +50,7 @@ export default defineComponent({
       //   f: 'json'
       // })
       // map.addLayer(dynamicLayer)
-      map.on('mouseover', onMapMove)
-      var marker = L.marker([31, 119]).addTo(map);
-      var circle = L.circle([31, 119], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 500
-        }).addTo(map);
-        var polygon = L.polygon([
-            [51.509, -0.08],
-            [51.503, -0.06],
-            [51.51, -0.047]
-          ]).addTo(map);
+      //map.on('mouseover', onMapMove)
     })
     function onMapMove(e) {
       console.log(e.latlng)

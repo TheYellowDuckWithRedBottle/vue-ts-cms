@@ -5,6 +5,9 @@
         v-for="(item, index) in userMenu"
         :key="index"
         class="menu-item"
+        :class="{
+          'menu-item-active': item.isActive,
+        }"
         @click="clickMenuItem(item, index)"
         @mouseenter="hoverMenuItem(item, index)"
         @mouseleave="leaveMenuItem(item, index)"
@@ -89,6 +92,13 @@ export default defineComponent({
     }
     const clickMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = true
+      userMenu.forEach((item: any) => {
+        if(item.name === menuItem.name) {
+          item.isActive = true
+        } else {
+          item.isActive = false
+        }
+      })
       emit('open', menuItem.name)
     }
     return {
@@ -127,7 +137,7 @@ export default defineComponent({
   border-bottom: 1px solid var(--backgroundColor);
   position: relative;
 }
-.menu-item:hover {
+.menu-item-active,.menu-item:hover {
   background: var(--color-primary);
   color: var(--backgroundColor);
   cursor: pointer;

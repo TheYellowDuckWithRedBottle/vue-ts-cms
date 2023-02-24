@@ -23,7 +23,11 @@ import {
   ElTree,
   ElDialog,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElUpload,
+  ElSelect,
+  ElOption,
+  ElMessage
 } from 'element-plus'
 
 const components = [
@@ -50,7 +54,11 @@ const components = [
   ElTree,
   ElDialog,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElUpload,
+  ElSelect,
+  ElOption,
+  ElMessage
 ]
 
 export default function (app: App): void {

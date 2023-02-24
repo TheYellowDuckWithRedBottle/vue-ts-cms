@@ -82,6 +82,11 @@ export default defineComponent({
   display: flex;
   justify-content: center;
 }
+.panel-body {
+  width: 100%;
+  height: calc(100% - 41px);
+  overflow: auto;
+}
 .divider {
   width: 96%;
   height: 100%;

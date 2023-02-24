@@ -22,9 +22,7 @@
 </template>
 
 <script>
-import Test from './test.vue'
-import L from 'leaflet'
-import { defineComponent, ref, inject } from 'vue'
+import { defineComponent, ref, getCurrentInstance, onMounted, watch } from 'vue'
 // interface Tree {
 //   label: string
 //   service?: string
@@ -34,8 +32,20 @@ export default defineComponent({
   name: 'App',
   components: {},
   setup() {
-    let map = inject('map')
-    console.log(map)
+    let instance = getCurrentInstance()
+    let L = {}
+    let map = {}
+    // watch (L,(newValue, oldValue) => {
+    //   console.log(newValue, oldValue)
+    // })
+    onMounted(() => {
+      if(instance !== null) {
+      L = instance.appContext.config.globalProperties.$L
+      map = instance.appContext.config.globalProperties.$map
+      console.log(L,map)
+      }
+    })
+
     const treeData =([
       {
         alias: '土地利用现状',
@@ -47,7 +57,8 @@ export default defineComponent({
             children: [
               {
                 alias: 'wms服务',
-                service: 'http://localhost:8090/geoserver/WMS/wms?service=WMS&version=1.1.0&request=GetMap&layers=WMS:SHP_1636427035338&bbox=4.0615005015008755E7,3532560.982614258,4.061549804877387E7,3532911.3776800316&width=768&height=545&srs=EPSG:4528&styles=&format=application/openlayers'
+                url: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map&',
+                service: 'http://webgis.cn/cgi-bin/mapserv?map=/owg/mfb3.map&'
               },
               {
                 alias: '荥阳点服务',
@@ -73,21 +84,41 @@ export default defineComponent({
       }
     ])
 
-    const handleNodeClick = (e) => {
+   function handleNodeClick(e) {
       console.log(e)
     }
-    const openService = (data, node) => {
-      console.log(data)
-      console.log(node)
-      //加载wms服务的图层
-      var wmsLayer = L.tileLayer.wms(
-          data.service, {
-                layers: 'nyc_roads',
+    function openService (data, node)  {
+      debugger
+      if(instance !== null) {
+        if(L === {} || map === {}) {
+          L = instance.appContext.config.globalProperties.$L
+          map = instance.appContext.config.globalProperties.$map
+        }
+      }
+      if(node.isCheck) {
+        var wmsLayer = L.tileLayer.wms(
+          data.url, {
+                layers: data.alias,
+                format: 'imgage/png',
+                transparent: true
             }
         );
         //添加图层到地图
-        console.log(wmsLayer)
-        wmsLayer.addTo(window.map);
+        wmsLayer.addTo(map);
+        wmsLayer.bringToFront();
+      } else {
+        map.eachLayer(function(layer) {
+          console.log(layer)
+          if(layer.options && layer.options.layers === data.alias) {
+            map.removeLayer(layer)
+          }
+        })
+      }
+
+      if(!data.service) return
+
+      //加载wms服务的图层
+
     }
     const defaultProps = {
       children: 'children',
