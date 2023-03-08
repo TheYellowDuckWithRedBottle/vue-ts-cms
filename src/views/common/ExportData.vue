@@ -52,9 +52,6 @@ export default defineComponent({
       emit('closeDialog')
     }
     function exportConfirm () {
-      console.log('exportConfirm')
-      console.log(state.exportFormat)
-      console.log(props.exportData)
       debugger
       switch (state.exportFormat) {
         case 'txt':
@@ -70,7 +67,6 @@ export default defineComponent({
               line: 'polyline'
             }
           }
-          console.log(shpwrite)
           shpwrite.zip(props.exportData, options).then((content) => {
             console.log(content)
           })

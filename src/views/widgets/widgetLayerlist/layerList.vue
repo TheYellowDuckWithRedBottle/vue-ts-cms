@@ -62,7 +62,8 @@ export default defineComponent({
               },
               {
                 alias: '荥阳点服务',
-                isCheck: false
+                isCheck: false,
+                url: 'http://localhost:6080/arcgis/rest/services/MyMapService/MapServer'
               }
             ]
           }
@@ -88,10 +89,11 @@ export default defineComponent({
       console.log(e)
     }
     function openService (data, node)  {
-      debugger
       if(instance !== null) {
-        if(L === {} || map === {}) {
+        if(Object.keys(L).length == 0) {
           L = instance.appContext.config.globalProperties.$L
+        }
+        if(Object.keys(map.length == 0)) {
           map = instance.appContext.config.globalProperties.$map
         }
       }

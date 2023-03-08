@@ -94,7 +94,6 @@ export default defineComponent({
   align-items: center;
 }
 .service-list {
-  width: 100%;
   height: 90%;
 }
 .map-service-dialog{
