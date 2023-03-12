@@ -7,10 +7,14 @@
 <script>
 import { defineComponent, onMounted, provide, ref, getCurrentInstance } from 'vue'
 import L from 'leaflet'
+import proj4 from 'proj4'
+import 'proj4leaflet'
+import {crs} from '@/global/crsDefine'
+import {tranfrom,getScaleByResolution, getResolutionByScale} from '@/global/crsTransform'
 import dynamicMapLayer from 'esri-leaflet/src/Layers/DynamicMapLayer'
 import 'leaflet/dist/leaflet.css'
-import mapConfig from './baseMapResource'
-// import {CRS_4490} from '@/global/crsDefine'
+
+
 export default defineComponent({
   props: {
     collapse: {
@@ -20,17 +24,18 @@ export default defineComponent({
   },
   setup() {
     onMounted(() => {
-
+      const scale = getScaleByResolution(305.40584370960335)
+      const resolution = getResolutionByScale(50000)
       const instance = getCurrentInstance()
       debugger
       
       
       positionControl()
       var map = L.map('map', {
-        crs: L.CRS.EPSG3857,
+        crs: crs.EPSG4528,
         attributionControl: false,
         zoomControl: false
-      }).setView([31, 119], 6)
+      }).setView([32, 120.84], 16)
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })
@@ -41,16 +46,16 @@ export default defineComponent({
       pos.addTo(map)
       map.addControl(zoomControl)
       map.addControl(scaleControl)
-      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
-      map.addLayer(osm);
-      // let dynamicLayer = dynamicMapLayer({
-      //   url: 'http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer',
-      //   opacity: 0.8,
-      //   f: 'json'
-      // })
-      // map.addLayer(dynamicLayer)
-      //map.on('mouseover', onMapMove)
+      // var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      // var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
+      // map.addLayer(osm);
+      let dynamicLayer = dynamicMapLayer({
+        url: 'http://localhost:6080/arcgis/rest/services/NT/LBHB/MapServer',
+        opacity: 0.5
+      })
+      console.log(dynamicLayer)
+      map.addLayer(dynamicLayer)
+      // map.on('mouseover', onMapMove)
     })
     function onMapMove(e) {
       console.log(e.latlng)
