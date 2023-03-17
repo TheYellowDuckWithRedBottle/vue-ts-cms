@@ -1,6 +1,7 @@
 <template>
-  <div class="file-import-container">
+  <div class="commonAnalysisHeader">
       <div class="operate-buttons">
+        <el-button size="small" type="primary" class="draw-button" @click="measureArea" v-if="showDrawButton">绘制</el-button>
         <el-button size="small" type="primary" class="file-button" @click="uploadFile">导入</el-button>
         <input type="file" style="display: none;" ref="uploadInput" @change="handlePreview">
         <el-button type="success" @click="exportFile" size="small" class="file-button">导出</el-button>
@@ -24,7 +25,7 @@
         <span>地块个数：{{ statisticInfo.amount }} 个</span>
       </div>
       <!-- 弹出的属性表信息 -->
-      <div class="attribute-table" v-show="false" ref="attributeTable">
+      <div class="attribute-table" v-show="showAttributes" ref="attributeTable">
         <el-table
           :data="tableData"
           border
@@ -46,10 +47,16 @@ import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
 export default defineComponent({
+  props: {
+    showDrawButton: {
+      type: Boolean,
+      default: false
+    },
+  },
   components: {
     ExoportData
   },
-  setup() {
+  setup(pops,{emit}) {
     let instance = getCurrentInstance()
     let L = instance.appContext.config.globalProperties.$L
     let map = instance.appContext.config.globalProperties.$map
@@ -61,6 +68,9 @@ export default defineComponent({
       fillOpacity: 0.5
     })
     let state = reactive({
+      points: [],
+      faceTempPolygons: {},
+      polygonList: [],
       featureList: [],
       dialogVisible: false, // 导出数据弹窗
       showAttributes: false, // 是否展示属性
@@ -110,6 +120,55 @@ export default defineComponent({
       const center = turfCenter(geoJson)
       const latlng = center.geometry.coordinates.reverse()
       map.setView(latlng, 16)
+    }
+    function measureArea () {
+      changeMouseStyle('crosshair')
+      map.on('click', e => {
+        state.points.push([e.latlng.lat, e.latlng.lng])
+      })
+      map.on('mousemove', e => {
+        if (state.points.length > 0) {
+          if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
+            map.removeLayer(state.faceTempPolygons)
+          }
+          const tempPoints = state.points.concat(e.latlng)
+          state.faceTempPolygons = new L.polygon(tempPoints,style)
+          map.addLayer(state.faceTempPolygons)
+        }
+      })
+      map.on('dblclick', e => {
+        if (state.faceTempPolygons != null || state.faceTempPolygons != undefined) {
+          map.removeLayer(state.faceTempPolygons)
+        }
+        state.polygonList = L.polygon([state.points], style).addTo(map)
+        const area = calcArea(state.polygonList)
+        state.resultList.push (
+          {
+            type: 'polygon',
+            geometry: state.polygonList,
+            info: area + '平方米'
+          }
+        )
+        map.addLayer(state.polygonList)
+        state.points = []
+        map.off('click')
+        map.off('mousemove')
+        map.off('dblclick')
+        changeMouseStyle('pointer')
+      })
+    }
+    // ====== 测量面积 ==========
+    function calcArea (polygon) {
+      return turfArea(polygon.toGeoJSON()).toFixed(2)
+    }
+    // ====== 计算中心点 =====
+    function calcCenter (polygon) {
+      return turfCenter(polygon.toGeoJSON())
+    }
+     // 改变鼠标样式
+     function changeMouseStyle (style) {
+      const mapContainer = document.getElementById('map')
+      mapContainer.style.cursor = style
     }
     // ======= 导入地块 =======
     function handlePreview() {
@@ -230,7 +289,9 @@ export default defineComponent({
       state.dialogVisible = false
     }
 
-    return {handlePreview,
+    return {
+            handlePreview,
+            measureArea,
             exportFile,
             clearBlocks,
             uploadFile,
@@ -245,7 +306,7 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-.file-import-container {
+.commonAnalysisHeader {
   width: 100%;
   height: 100%;
   .operate-buttons {
@@ -329,6 +390,9 @@ export default defineComponent({
   }
   .attribute-table {
     display: flex;
+    height: 300px;
+    width: 100%;
+    overflow: auto;
     position: absolute;
     // top: 100px;
   }
