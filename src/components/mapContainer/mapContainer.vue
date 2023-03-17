@@ -29,7 +29,6 @@ export default defineComponent({
       const instance = getCurrentInstance()
       positionControl()
       var map = L.map('map', {
-        crs: crs.EPSG4528,
         attributionControl: false,
         zoomControl: false
       }).setView([32, 120.84], 16)
@@ -43,15 +42,15 @@ export default defineComponent({
       pos.addTo(map)
       map.addControl(zoomControl)
       map.addControl(scaleControl)
-      // var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      // var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
-      // map.addLayer(osm);
-      let dynamicLayer = dynamicMapLayer({
-        url: 'http://localhost:6080/arcgis/rest/services/NT/LBHB/MapServer',
-        opacity: 0.5
-      })
-      console.log(dynamicLayer)
-      map.addLayer(dynamicLayer)
+      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var osm = new L.TileLayer(osmUrl, {minZoom: 4, maxZoom: 18});
+      map.addLayer(osm);
+      // let dynamicLayer = dynamicMapLayer({
+      //   url: 'http://localhost:6080/arcgis/rest/services/NT/LBHB/MapServer',
+      //   opacity: 0.5
+      // })
+      // console.log(dynamicLayer)
+      // map.addLayer(dynamicLayer)
       // map.on('mouseover', onMapMove)
     })
     function onMapMove(e) {

@@ -1,5 +1,5 @@
 <template>
-  <div>i am tdlyxz</div>
+  <div></div>
 </template>
 
 <script lang="ts">
