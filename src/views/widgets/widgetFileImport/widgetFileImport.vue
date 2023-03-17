@@ -1,5 +1,40 @@
 <template>
-  <common-analysis-header></common-analysis-header>
+  <div class="file-import-container">
+      <div class="operate-buttons">
+        <el-button size="small" type="primary" class="file-button" @click="uploadFile">导入</el-button>
+        <input type="file" style="display: none;" ref="uploadInput" @change="handlePreview">
+        <el-button type="success" @click="exportFile" size="small" class="file-button">导出</el-button>
+        <el-button type="warning" @click="clearBlocks" size="small" class="file-button">清空</el-button>
+      </div>
+      <div class="operate-divider"></div>
+      <div class="block-list-container">
+        <div v-for="(item, index) in featureList" :key="index"
+          class="geometry-item"
+          @click="loacateBlock(item.geoJson)">
+          <span class="item-title">{{ item.title }}</span>
+          <div class="item-icons">
+            <font-awesome-icon icon="fa-solid fa-circle-info" class="icon" @click.stop="viewAttribtues(item)"/>
+            <font-awesome-icon icon="fa-solid fa-file-export" class="icon" @click="exportFile(item)"/>
+          </div>
+        </div>
+      </div>
+      <!-- 地块信息 -->
+      <div class="import-info-container">
+        <span>地块面积：{{ statisticInfo.area }} 平方米</span>
+        <span>地块个数：{{ statisticInfo.amount }} 个</span>
+      </div>
+      <!-- 弹出的属性表信息 -->
+      <div class="attribute-table" v-show="false" ref="attributeTable">
+        <el-table
+          :data="tableData"
+          border
+          size="mini"
+          style="width: 100%;height: 300px; overflow:auto;">
+          <el-table-column prop="field" label="属性名" width="120" />
+          <el-table-column prop="value" label="属性值" width="200" />
+        </el-table>
+      </div>
+  </div>
   <ExoportData :dialogVisible="dialogVisible" :exportData="exportData" @closeDialog="closeExportCom"/>
 </template>
 
@@ -9,12 +44,10 @@ import turfCenter from '@turf/center'
 import turfArea from '@turf/area'
 import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
-import CommonAnalysisHeader from '@/views/common/CommonAnalysisHeader.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
 export default defineComponent({
   components: {
-    ExoportData,
-    CommonAnalysisHeader
+    ExoportData
   },
   setup() {
     let instance = getCurrentInstance()
