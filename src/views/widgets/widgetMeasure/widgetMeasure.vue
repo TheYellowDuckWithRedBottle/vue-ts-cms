@@ -28,36 +28,18 @@
 
 <script>
 import { defineComponent, toRefs, getCurrentInstance, reactive } from 'vue'
-import turfArea from '@turf/area'
-import turfCenter from '@turf/center'
-import {point} from '@turf/helpers'
-import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
+import CommonAnalysisHeader from '@/views/common/CommonAnalysisHeader.vue'
 export default defineComponent({
   components: {
+    CommonAnalysisHeader,
     ExoportData
   },
   setup() {
     let instance = getCurrentInstance()
     let L = {}
     let map = {}
-    let style = {color: '#fc6a00', fillColor: '#fc6a00', fillOpacity: 0.2}
-    let state = reactive({
-      dialogVisible: false,
-      exportData: {},
-
-      points: [],
-      lines: {},
-      tempLines: {},
-      geometry: [],
-      distance: 0,
-
-      faceTempPolygons: {},
-      polygonList: {},
-
-      resultList: []
-    })
-
+    let state = {}
     if(instance !== null) {
       console.log(instance.appContext.config.globalProperties.$map)
       L = instance.appContext.config.globalProperties.$L
@@ -215,13 +197,7 @@ export default defineComponent({
       })
     }
     return { ...toRefs(state),
-            closeExportCom,
-            measuerLength,
-            measureArea,
-            exportBlock,
-            exportAllBlocks,
-            clearBlock,
-            clearResultList}
+            }
   }
 })
 </script>
