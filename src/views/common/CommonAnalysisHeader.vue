@@ -178,6 +178,7 @@ export default defineComponent({
       reader.onload  = function (e) {
         let res = e.target.result
         try {
+          file.input = ''
           shpjs.parseZip(res).then((parsedResult) => {
           state.statisticInfo.area += turfArea(parsedResult)
           state.statisticInfo.area =  state.statisticInfo.area.toFixed(2)
@@ -205,6 +206,7 @@ export default defineComponent({
           }
         })
         } catch (error) {
+          file.input = ''
           ElMessage({
           message: error,
           type: 'error'
