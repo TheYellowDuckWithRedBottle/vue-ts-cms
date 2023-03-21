@@ -4,10 +4,6 @@
 </template>
 
 <script>
-import shpjs from 'shpjs'
-import turfCenter from '@turf/center'
-import turfArea from '@turf/area'
-import { ElMessage } from 'element-plus'
 import ExoportData from '@/views/common/ExportData.vue'
 import CommonAnalysisHeader from '@/views/common/CommonAnalysisHeader.vue'
 import { defineComponent, ref, toRefs, reactive, getCurrentInstance } from 'vue'
@@ -29,11 +25,7 @@ export default defineComponent({
     })
     let state = reactive({
     })
-
-    return {
-            ...toRefs(state),
-          }
-  }
+}
 })
 </script>
 
@@ -126,5 +118,4 @@ export default defineComponent({
     // top: 100px;
   }
 }
-
 </style>

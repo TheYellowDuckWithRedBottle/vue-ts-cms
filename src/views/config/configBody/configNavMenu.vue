@@ -60,7 +60,6 @@ export default defineComponent({
       { title: '系统管理', icon: '', isFolder: false }
     ])
     const clickFolder = function (item: any) {
-      debugger
       for (var configItem of configMenu) {
         if (configItem.title === item.title) {
           configItem.isFolder = !configItem.isFolder

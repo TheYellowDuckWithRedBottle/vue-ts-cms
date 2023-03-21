@@ -6,6 +6,7 @@
         <input type="file" style="display: none;" ref="uploadInput" @change="handlePreview">
         <el-button type="success" @click="exportFile" size="small" class="file-button">导出</el-button>
         <el-button type="warning" @click="clearBlocks" size="small" class="file-button">清空</el-button>
+        <el-button type="primary"  :disabled="featureList.length === 0" @click="analysis" size="small" v-if="showAnalysisBtn" class="file-button">分析</el-button>
       </div>
       <div class="operate-divider"></div>
       <div class="block-list-container">
@@ -52,6 +53,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    showAnalysisBtn: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     ExoportData
@@ -72,6 +77,7 @@ export default defineComponent({
       faceTempPolygons: {},
       polygonList: [],
       featureList: [],
+      resultList: [],
       dialogVisible: false, // 导出数据弹窗
       showAttributes: false, // 是否展示属性
       locatedBlock: null, // 定位的地块
@@ -132,7 +138,7 @@ export default defineComponent({
             map.removeLayer(state.faceTempPolygons)
           }
           const tempPoints = state.points.concat(e.latlng)
-          state.faceTempPolygons = new L.polygon(tempPoints,style)
+          state.faceTempPolygons = new L.polygon(tempPoints,style.value)
           map.addLayer(state.faceTempPolygons)
         }
       })
@@ -147,6 +153,16 @@ export default defineComponent({
             type: 'polygon',
             geometry: state.polygonList,
             info: area + '平方米'
+          }
+        )
+        state.featureList.push(
+          {
+            title: '图斑',
+            type: 'polygon',
+            properties: {
+              area: area
+            },
+            geoJson: state.polygonList.toGeoJSON()
           }
         )
         map.addLayer(state.polygonList)

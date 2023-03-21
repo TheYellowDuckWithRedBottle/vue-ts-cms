@@ -51,25 +51,20 @@ export default defineComponent({
     function closeDialog() {
       emit('closeDialog')
     }
+    function exportShp (geoJSON) {
+      const exportUrl = ''
+      const geojson = geoJSON
+      axios.post(exportUrl, geojson).then(res => {
+        console.log(res)
+      })
+    }
     function exportConfirm () {
-      debugger
       switch (state.exportFormat) {
         case 'txt':
 
           break;
         case 'shp':
-          // eslint-disable-next-line no-case-declarations
-          const options = {
-            folder: 'shapefile',
-            types: {
-              point: 'point',
-              polygon: 'polygon',
-              line: 'polyline'
-            }
-          }
-          shpwrite.zip(props.exportData, options).then((content) => {
-            console.log(content)
-          })
+          exportShp(props.exportData)
           break;
         case 'geojson':
           // eslint-disable-next-line no-case-declarations
