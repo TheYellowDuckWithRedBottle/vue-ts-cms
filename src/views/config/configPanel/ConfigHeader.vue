@@ -131,7 +131,6 @@ export default defineComponent({
     }
     // 切换tab页
     function switchConfig (tab: string) {
-      debugger
       state.currentTab = tab
       switch (tab) {
         case '模板列表':

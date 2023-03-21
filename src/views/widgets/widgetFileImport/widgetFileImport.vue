@@ -25,7 +25,7 @@ export default defineComponent({
     })
     let state = reactive({
     })
-
+}
 })
 </script>
 

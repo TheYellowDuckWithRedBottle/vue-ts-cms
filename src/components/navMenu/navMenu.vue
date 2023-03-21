@@ -19,7 +19,7 @@
           <div
             v-for="(child, childIndex) in item.children"
             :key="childIndex"
-            @click.stop="clickMenuItem(child, index)"
+            @click.stop="clickMenuItem(child, index, item)"
             class="menu-child-name"
           >
             <span>{{ child.title }}</span>
@@ -59,6 +59,7 @@ import { defineComponent, computed, reactive } from 'vue'
 import { userStore } from '@/store/index'
 import Cache from '@/utility/Cache'
 import { IRootState } from '@/store/types'
+import { debug } from 'console'
 
 export default defineComponent({
   props: {
@@ -90,8 +91,13 @@ export default defineComponent({
     const leaveMenuItem = (menuItem: any, index: number) => {
       userMenu[index]['showChild'] = false
     }
-    const clickMenuItem = (menuItem: any, index: number) => {
-      userMenu[index]['showChild'] = true
+    const clickMenuItem = (menuItem: any, index: number, item: any) => {
+      // 点击菜单，如果菜单有子菜单，不做任何操作
+      if(menuItem.children && menuItem.children.length > 0){
+        return
+      }
+      // 点击没有子菜单的顶级菜单或者子菜单，关闭所有子菜单
+      userMenu[index]['showChild'] = false
       userMenu.forEach((item: any) => {
         if(item.name === menuItem.name) {
           item.isActive = true

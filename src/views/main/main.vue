@@ -3,7 +3,7 @@
     <nav-header />
     <navTopTool @collapse="collapseMenu" />
     <div class="layout-body">
-      <nav-menu v-if="isCollapse" @open="openMenu" :menuData="menuData" />
+      <nav-menu v-if="isCollapse" @open="openMenu" ref="childRef" :menuData="menuData" />
       <menuPanel
         @collapse="collapseMenu"
         :isCollapse="isCollapse"
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref,toRefs } from 'vue'
+import { defineComponent, reactive, ref, toRefs, onMounted, getCurrentInstance } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
 import navTopTool from '@/components/navTopTool/navTopTool.vue'
@@ -36,7 +36,9 @@ export default defineComponent({
     mapContainer
   },
   setup() {
-    let isCollapse = ref(true)
+    const childRef = ref(null)
+    const grandChildRef = ref(null)
+    let instance = getCurrentInstance()
     let state = reactive({
       menuData: [
       { name: 'layerlist', title: '数据', children: [] },
@@ -57,12 +59,18 @@ export default defineComponent({
     currentWidget: {name:'layerlist',title:'数据'},
     isCollapse:true
     })
+    onMounted(() => {
+      console.log(childRef.value)
+      console.log(grandChildRef.value)
+    })
 
     function collapseMenu(value: boolean) {
-      isCollapse.value = value
+      state.isCollapse = value
     }
     function openMenu(widgetName: string) {
-      console.log(widgetName)
+      // 获取子组件实例
+      console.log(childRef.value)
+      console.log(grandChildRef.value)
       travelTree(state.menuData,widgetName)
     }
     function travelTree(tree:any, target:string):any{
@@ -77,7 +85,7 @@ export default defineComponent({
     }
     return {
       collapseMenu,
-
+      childRef,
       openMenu,
       ...toRefs(state)
     }
