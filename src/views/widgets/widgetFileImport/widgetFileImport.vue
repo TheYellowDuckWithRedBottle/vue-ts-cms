@@ -24,7 +24,18 @@ export default defineComponent({
       fillOpacity: 0.5
     })
     let state = reactive({
+      exoportData:{},
+      dialogVisible: false
     })
+    function closeExportCom () {
+      state.dialogVisible = false
+    }
+    return {
+      ...toRefs(state),
+      exportFormat,
+      style
+    }
+
 }
 })
 </script>
