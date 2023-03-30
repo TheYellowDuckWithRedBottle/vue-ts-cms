@@ -29,6 +29,7 @@
 
 <script>
 import shpwrite from 'shpjs'
+import { ElMessage } from 'element-plus'
 import { defineComponent, ref, toRefs, reactive } from 'vue'
 import FileSave from 'file-saver'
 import axios from 'axios'
@@ -59,6 +60,13 @@ export default defineComponent({
       })
     }
     function exportConfirm () {
+      if(!props.exportData) {
+        ElMessage({
+          message: '未获取到导出的地块数据',
+          type: 'warning'
+        })
+        return
+      }
       switch (state.exportFormat) {
         case 'txt':
 
