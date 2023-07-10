@@ -77,7 +77,7 @@ export default defineComponent({
       }
 
       const clickItem = (item) => {
-        debugger
+
         modifyTree(state.treeData)
         console.log(state.treeData)
         state.currentIndex = item.name

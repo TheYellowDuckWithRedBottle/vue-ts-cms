@@ -1,6 +1,5 @@
 <template>
   <div class="analysis-panel">
-    我是分析
     <SDXZ></SDXZ>
     <Tdlyxz></Tdlyxz>
   </div>

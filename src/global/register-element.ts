@@ -27,7 +27,9 @@ import {
   ElUpload,
   ElSelect,
   ElOption,
-  ElMessage
+  ElMessage,
+  ElSlider,
+  ElSwitch
 } from 'element-plus'
 
 const components = [
@@ -58,7 +60,9 @@ const components = [
   ElUpload,
   ElSelect,
   ElOption,
-  ElMessage
+  ElMessage,
+  ElSlider,
+  ElSwitch
 ]
 
 export default function (app: App): void {

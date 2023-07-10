@@ -1,11 +1,14 @@
 <template>
   <div class="measure-container">
+    <!-- 上方操作按钮 -->
     <div class="operate-buttons">
         <el-button type="primary" @click="measuerLength" size="small">长度</el-button>
         <el-button type="primary" @click="measureArea" size="small">面积</el-button>
         <el-button type="warning" @click="clearResultList" size="small">清除</el-button>
       </div>
+      <!-- 分割线 -->
       <div class="operate-divider"></div>
+      <!-- 地块列表 -->
       <div class="block-list-container">
         <div v-for="(item, index) in resultList" :key = "index" class="geometry-item">
           <div>
@@ -65,6 +68,7 @@ export default defineComponent({
     function closeExportCom () {
       state.dialogVisible = false
     }
+
     // ===== 测量长度 =========
     function measuerLength () {
       changeMouseStyle("crosshair")
@@ -162,7 +166,6 @@ export default defineComponent({
      * @param {*} text 添加的注记
      */
     function addMarker (pointParams, text) {
-      debugger
       if(pointParams instanceof L.LatLng) {
         pointParams = point([pointParams.lng,pointParams.lat]);
       }

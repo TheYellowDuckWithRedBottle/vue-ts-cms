@@ -29,6 +29,7 @@
 
 <script>
 import shpwrite from 'shpjs'
+import { ElMessage } from 'element-plus'
 import { defineComponent, ref, toRefs, reactive } from 'vue'
 import FileSave from 'file-saver'
 import axios from 'axios'
@@ -51,25 +52,27 @@ export default defineComponent({
     function closeDialog() {
       emit('closeDialog')
     }
+    function exportShp (geoJSON) {
+      const exportUrl = ''
+      const geojson = geoJSON
+      axios.post(exportUrl, geojson).then(res => {
+        console.log(res)
+      })
+    }
     function exportConfirm () {
-      debugger
+      if(!props.exportData) {
+        ElMessage({
+          message: '未获取到导出的地块数据',
+          type: 'warning'
+        })
+        return
+      }
       switch (state.exportFormat) {
         case 'txt':
 
           break;
         case 'shp':
-          // eslint-disable-next-line no-case-declarations
-          const options = {
-            folder: 'shapefile',
-            types: {
-              point: 'point',
-              polygon: 'polygon',
-              line: 'polyline'
-            }
-          }
-          shpwrite.zip(props.exportData, options).then((content) => {
-            console.log(content)
-          })
+          exportShp(props.exportData)
           break;
         case 'geojson':
           // eslint-disable-next-line no-case-declarations
