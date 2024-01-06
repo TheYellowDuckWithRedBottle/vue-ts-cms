@@ -97,7 +97,6 @@
 </template>
 
 <script lang="ts">
-import { stat } from 'fs'
 import { defineComponent, reactive, ref, toRefs } from 'vue'
 import mapTemplate from './mapTemplate.vue'
 import configService from './ConfigServices.vue'

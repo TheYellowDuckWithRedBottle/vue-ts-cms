@@ -27,6 +27,9 @@ export default defineComponent({
       const scale = getScaleByResolution(305.40584370960335)
       const resolution = getResolutionByScale(50000)
       const instance = getCurrentInstance()
+      debugger
+      
+      
       positionControl()
       var map = L.map('map', {
         attributionControl: false,

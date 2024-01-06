@@ -59,7 +59,6 @@ import { defineComponent, computed, reactive } from 'vue'
 import { userStore } from '@/store/index'
 import Cache from '@/utility/Cache'
 import { IRootState } from '@/store/types'
-import { debug } from 'console'
 
 export default defineComponent({
   props: {
