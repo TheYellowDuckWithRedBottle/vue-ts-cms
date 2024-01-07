@@ -16,7 +16,8 @@ import {
   faFileImport,
   faFileExport,
   faGripLines,
-  faInfoCircle
+  faInfoCircle,
+  faCopy,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -43,6 +44,7 @@ library.add(faFileImport)
 library.add(faFileExport)
 library.add(faGripLines)
 library.add(faInfoCircle)
+library.add(faCopy)
 const app = createApp(App)
 
 app.component('font-awesome-icon', FontAwesomeIcon)

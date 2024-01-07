@@ -25,6 +25,7 @@
     "element-plus": "^1.0.2-beta.62",
     "esri-leaflet": "^3.0.9",
     "file-saver": "^2.0.5",
+    "json-editor-vue3": "^1.0.9",
     "leaflet": "^1.9.2",
     "leaflet.pm": "^2.2.0",
     "less-loader": "^5.0.0",
@@ -36,6 +37,7 @@
     "shpjs": "^4.0.4",
     "style-loader": "^3.3.1",
     "vue": "^3.0.0",
+    "vue-json-edit": "^1.4.3",
     "vue-router": "^4.0.10",
     "vuex": "^4.0.2"
   },
