@@ -38,9 +38,9 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   if (to.path !== '/login') {
-    if (!cache.getCache('token')) {
-      router.push('/login')
-    }
+    // if (!cache.getCache('token')) {
+    //   router.push('/login')
+    // }
   }
 })
 export default router

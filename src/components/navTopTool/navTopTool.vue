@@ -14,7 +14,9 @@
           <el-tab-pane label="GeoJSON" name="geojson">
             <JsonEdit class="json-editor" v-model="geojsonData" @change ="changeGeojson"/>
           </el-tab-pane>
-          <el-tab-pane label="属性表" name="attribute-table">属性表</el-tab-pane>
+          <el-tab-pane label="属性表" name="attribute-table">
+            <ElTable/>
+          </el-tab-pane>
       </el-tabs>
       </div>
     </div>
@@ -23,9 +25,10 @@
 
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import JsonEdit from 'json-editor-vue3'
 import turfCenter from '@turf/center'
+import { ElTable } from 'element-plus'
 
 export default defineComponent({
   props: {
@@ -35,7 +38,8 @@ export default defineComponent({
     }
   },
   components: {
-    JsonEdit
+    JsonEdit,
+    ElTable
   },
   setup(props, { emit }) {
     let instance = getCurrentInstance()
@@ -47,9 +51,27 @@ export default defineComponent({
 
     let state = reactive({
       activeName: 'geojson',
-      geojsonData: {},
+      geojsonData: {
+        type: 'Feature',
+        geometry: {},
+        properties: {}
+      },
     })
     let showEditor = ref(false)
+    // eslint-disable-next-line vue/return-in-computed-property
+    let computedProperties = computed(() => {
+      if (state.geojsonData) {
+        if (state.geojsonData.type === 'Feature') {
+          return state.geojsonData.properties
+        } else if (state.geojsonData.type === 'FeatureCollection') {
+          return state.geojsonData.features.map((feature: any) => {
+            return feature.properties
+          })
+        }
+      } else {
+        return []
+      }
+    })
     function collapseMenuPanel() {
       emit('collapse', true)
     }
@@ -61,7 +83,7 @@ export default defineComponent({
       state.activeName = tab.name
       if (tab.name === '属性表') {
         console.log('属性表')
-      } 
+      }
     }
     function changeGeojson (data: any) {
       console.log(data)
@@ -85,7 +107,8 @@ export default defineComponent({
       handleClick,
       changeGeojson,
       ...state,
-      showEditor
+      showEditor,
+      computedProperties
     }
   }
 })
