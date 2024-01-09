@@ -15,7 +15,14 @@
             <JsonEdit class="json-editor" v-model="geojsonData" @change ="changeGeojson"/>
           </el-tab-pane>
           <el-tab-pane label="属性表" name="attribute-table">
-            <ElTable/>
+            <ElTable :data="geojsonProperties" border v-if="geojsonPropertiesColumns.length > 0">
+              <el-table-column v-for="(item, index) in geojsonPropertiesColumns"
+                :prop="item.prop"
+                :label="item.label"
+                :key="index"
+              ></el-table-column>
+            </ElTable>
+            <div v-else> 无属性 </div>
           </el-tab-pane>
       </el-tabs>
       </div>
@@ -23,12 +30,13 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, getCurrentInstance } from 'vue'
 import { reactive, ref, computed } from 'vue'
 import JsonEdit from 'json-editor-vue3'
-import turfCenter from '@turf/center'
+import {turfCenter, bboxPolygon} from '@turf/center'
 import { ElTable } from 'element-plus'
+import { GeoJSONUnionType, GeoJSONFeatureCollection } from '../../utility/geojsonFile'
 
 export default defineComponent({
   props: {
@@ -43,7 +51,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     let instance = getCurrentInstance()
-    let L:any = null, map:any = null
+    let L = null, map = null
     if (instance) {
       L = instance.appContext.config.globalProperties.$L
       map = instance.appContext.config.globalProperties.$map
@@ -51,27 +59,34 @@ export default defineComponent({
 
     let state = reactive({
       activeName: 'geojson',
-      geojsonData: {
-        type: 'Feature',
-        geometry: {},
-        properties: {}
-      },
     })
+    let geojsonProperties= ref([])
+    let geojsonPropertiesColumns = ref([])
     let showEditor = ref(false)
-    // eslint-disable-next-line vue/return-in-computed-property
-    let computedProperties = computed(() => {
-      if (state.geojsonData) {
-        if (state.geojsonData.type === 'Feature') {
-          return state.geojsonData.properties
-        } else if (state.geojsonData.type === 'FeatureCollection') {
-          return state.geojsonData.features.map((feature: any) => {
-            return feature.properties
-          })
-        }
+    function getJsonProperties (geojsonData) {
+      if (geojsonData && geojsonData.features && geojsonData.features.length > 0) {
+        return geojsonData.features.map((feature) => {
+          return feature.properties
+        })
+      } else if (geojsonData && geojsonData.properties){
+        return [geojsonData.properties]
+      } else
+        return []
+    }
+    function getJsonPropertiesColumn (properties) {
+      if (properties && properties.length > 0) {
+         let keys = Object.keys(properties[0])
+         let columns = keys.map((key) => {
+           return {
+             prop: key,
+             label: key
+           }
+         })
+         return columns
       } else {
         return []
       }
-    })
+    }
     function collapseMenuPanel() {
       emit('collapse', true)
     }
@@ -79,27 +94,33 @@ export default defineComponent({
       showEditor.value = !showEditor.value
       console.log(showEditor.value)
     }
-    function handleClick (tab: any) {
-      state.activeName = tab.name
-      if (tab.name === '属性表') {
-        console.log('属性表')
-      }
+    function handleClick (tab) {
+      console.log(tab)
+      state.activeName = tab.props.name
     }
-    function changeGeojson (data: any) {
-      console.log(data)
-      debugger
+    function changeGeojson (data) {
+      if (Object.keys(L).length === 0) {
+          L = instance.appContext.config.globalProperties.$L
+        }
+      if (Object.keys(map).length === 0) {
+          map = instance.appContext.config.globalProperties.$map
+      }
       if (Object.keys(data).length > 0) {
         L.geoJSON(data).addTo(map)
         const center = turfCenter(data)
         const latlng = center.geometry.coordinates.reverse()
         map.setView(latlng, 10)
       } else {
-        map.eachLayer((layer: any) => {
+        if (Object.keys(map).length > 0) {
+          map.eachLayer((layer) => {
           if (layer instanceof L.GeoJSON) {
             map.removeLayer(layer)
           }
         })
+        }
       }
+      geojsonProperties.value = getJsonProperties(data)
+      geojsonPropertiesColumns.value = getJsonPropertiesColumn(state.geojsonProperties)
     }
     return {
       collapseMenuPanel,
@@ -107,8 +128,9 @@ export default defineComponent({
       handleClick,
       changeGeojson,
       ...state,
-      showEditor,
-      computedProperties
+      geojsonProperties,
+      geojsonPropertiesColumns,
+      showEditor
     }
   }
 })
