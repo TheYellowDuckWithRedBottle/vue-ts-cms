@@ -26,6 +26,11 @@
           </el-tab-pane>
       </el-tabs>
       </div>
+      <div class="city-location">
+        <font-awesome-icon icon="fa-solid fa-marker" @click="switchPanel" />
+      </div>
+      <div class="city-locationPanel" v-if="showCityLocation">
+      </div>
     </div>
   </div>
 </template>
@@ -63,6 +68,7 @@ export default defineComponent({
     let geojsonProperties= ref([])
     let geojsonPropertiesColumns = ref([])
     let showEditor = ref(false)
+    let showCityLocation = ref(true)
     function getJsonProperties (geojsonData) {
       if (geojsonData && geojsonData.features && geojsonData.features.length > 0) {
         return geojsonData.features.map((feature) => {
@@ -130,7 +136,8 @@ export default defineComponent({
       ...state,
       geojsonProperties,
       geojsonPropertiesColumns,
-      showEditor
+      showEditor,
+      showCityLocation
     }
   }
 })
@@ -160,12 +167,12 @@ export default defineComponent({
     color: #428bca;
     font-weight: 600;
     position:relative;
-    .copy-coord-panel {
+    .copy-coord-panel,.city-location {
       cursor: pointer;
       position: absolute;
       right: 4px;
     }
-    .editor-panel {
+    .editor-panel,.city-locationPanel {
       position: fixed;
       width: 500px;
       height: 90%;
