@@ -4,13 +4,13 @@
       <font-awesome-icon icon="fa-solid fa-bars" />
       <!-- 靠右 -->
     </div>
-    <!-- 从右往左 -->
+    <!-- 从右往左排列工具条 -->
     <div class="tool-panel">
+      <!-- 粘贴geojson -->
       <div class="copy-coord-panel">
         <font-awesome-icon icon="fa-solid fa-copy" @click="switchPanel" />
-      </div>
-      <div class="editor-panel" v-if="showEditor">
-        <el-tabs v-model="activeName" @tab-click="handleClick" class="el-tabs">
+        <div class="editor-panel" v-if="showEditor">
+          <el-tabs v-model="activeName" @tab-click="handleClick" class="el-tabs">
           <el-tab-pane label="GeoJSON" name="geojson">
             <JsonEdit class="json-editor" v-model="geojsonData" @change ="changeGeojson"/>
           </el-tab-pane>
@@ -24,19 +24,24 @@
             </ElTable>
             <div v-else> 无属性 </div>
           </el-tab-pane>
-      </el-tabs>
+          </el-tabs>
+        </div>
       </div>
-      <div class="city-location">
-        <font-awesome-icon icon="fa-solid fa-marker" @click="switchPanel" />
-      </div>
-      <div class="city-locationPanel" v-if="showCityLocation">
+      <!-- 城市定位 -->
+      <div class="city-location-panel">
+        <font-awesome-icon icon="fa-solid fa-marker" @click="switchCityPanel" />
+        <div class="city-locationPanel" v-if="showCityLocation">
+          <div v-for="(cityItem, index) in cityList" :key="index">
+            {{cityItem.name}}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, getCurrentInstance } from 'vue'
+import { defineComponent, getCurrentInstance, onMounted } from 'vue'
 import { reactive, ref, computed } from 'vue'
 import JsonEdit from 'json-editor-vue3'
 import {turfCenter, bboxPolygon} from '@turf/center'
@@ -55,6 +60,10 @@ export default defineComponent({
     ElTable
   },
   setup(props, { emit }) {
+    onMounted(() => {
+      // 获取cityList
+      // getCityList()
+    })
     let instance = getCurrentInstance()
     let L = null, map = null
     if (instance) {
@@ -63,12 +72,77 @@ export default defineComponent({
     }
 
     let state = reactive({
-      activeName: 'geojson',
+      activeName: 'geojson'
     })
     let geojsonProperties= ref([])
     let geojsonPropertiesColumns = ref([])
+    let cityList = ref([
+      {
+        name: '北京',
+        lat: 39.9042,
+        lng: 116.4074
+      },
+      {
+        name: '上海',
+        lat: 31.2304,
+        lng: 121.4737
+      },
+      {
+        name: '天津',
+        lat: 39.1397,
+        lng: 117.2097
+      },
+      {
+        name: '重庆',
+        lat: 29.5596,
+        lng: 106.5507
+      },
+      {
+        name: '深圳',
+        lat: 22.5431,
+        lng: 114.0574
+      },
+      {
+        name: '广州',
+        lat: 23.1291,
+        lng: 113.2643
+    },
+      {
+        name: '杭州',
+        lat: 30.2675,
+        lng: 120.1972
+      },
+      {
+        name: '南京',
+        lat: 31.8909,
+        lng: 118.7861
+      },
+      {
+        name: '苏州',
+        lat: 31.3204,
+        lng: 120.6179
+      },
+      {
+        name: '成都',
+        lat: 30.6596,
+        lng: 104.0649
+      },
+      {
+        name: '西安',
+        lat: 34.2649,
+        lng: 108.9481
+    }
+    ])
     let showEditor = ref(false)
-    let showCityLocation = ref(true)
+    let showCityLocation = ref(false)
+    function getCityList () {
+      let url = '/api/city'
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          cityList.value = data
+        })
+    }
     function getJsonProperties (geojsonData) {
       if (geojsonData && geojsonData.features && geojsonData.features.length > 0) {
         return geojsonData.features.map((feature) => {
@@ -99,6 +173,9 @@ export default defineComponent({
     function switchPanel () {
       showEditor.value = !showEditor.value
       console.log(showEditor.value)
+    }
+    function switchCityPanel () {
+      showCityLocation.value = !showCityLocation.value
     }
     function handleClick (tab) {
       console.log(tab)
@@ -131,9 +208,11 @@ export default defineComponent({
     return {
       collapseMenuPanel,
       switchPanel,
+      switchCityPanel,
       handleClick,
       changeGeojson,
       ...state,
+      cityList,
       geojsonProperties,
       geojsonPropertiesColumns,
       showEditor,
@@ -162,15 +241,15 @@ export default defineComponent({
     // 从右往左
     margin-left: auto;
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     font-size: 14px;
     color: #428bca;
     font-weight: 600;
     position:relative;
-    .copy-coord-panel,.city-location {
+    .copy-coord-panel,.city-location-panel {
       cursor: pointer;
-      position: absolute;
-      right: 4px;
+      margin: 0 4px;
     }
     .editor-panel,.city-locationPanel {
       position: fixed;
@@ -184,6 +263,21 @@ export default defineComponent({
         padding: 4px;
         height: 100%;
         width: 100%;
+      }
+    }
+    .city-locationPanel {
+      height: 300px;
+      width: 20%;
+    // 半透明
+      background: rgba(255,255,255,0.8);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+      gap: 10px;
+      counter-reset: num;
+      div:before {
+        border: 1px solid;
+        content: counter(num);
+        counter-increment: num;
       }
     }
   }
