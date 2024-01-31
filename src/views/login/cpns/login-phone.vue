@@ -16,7 +16,6 @@
 import { defineComponent, reactive } from 'vue'
 import { ElForm } from 'element-plus'
 import { ref } from 'vue'
-import { LoginByPhone } from '@/service/login/login'
 
 export default defineComponent({
   setup() {
@@ -29,9 +28,7 @@ export default defineComponent({
     const loginAction = () => {
       formRef.value?.validate((valid) => {
         if (valid) {
-          LoginByPhone(phone.num, phone.code).then((res) => {
-            console.log('登录成功')
-          })
+          console.log('hah')
         }
       })
     }
