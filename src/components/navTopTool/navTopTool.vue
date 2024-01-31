@@ -7,8 +7,8 @@
     <!-- 从右往左排列工具条 -->
     <div class="tool-panel">
       <!-- 粘贴geojson -->
-      <div class="copy-coord-panel">
-        <font-awesome-icon icon="fa-solid fa-copy" @click="switchPanel" />
+      <div class="copy-coord-panel" :class="{'active': showEditor}">
+        <font-awesome-icon icon="fa-solid fa-copy" @click="switchPanel"  />
         <div class="editor-panel" v-if="showEditor">
           <el-tabs v-model="activeName" @tab-click="handleClick" class="el-tabs">
           <el-tab-pane label="GeoJSON" name="geojson">
@@ -28,7 +28,7 @@
         </div>
       </div>
       <!-- 城市定位 -->
-      <div class="city-location-panel">
+      <div class="city-location-panel" :class="{'active': showCityLocation}">
         <font-awesome-icon icon="fa-solid fa-marker" @click="switchCityPanel" />
         <div class="city-locationPanel" v-if="showCityLocation">
           <div v-for="(cityItem, index) in cityList" :key="index">
@@ -234,6 +234,10 @@ export default defineComponent({
   align-items: center;
   padding: 0 8px;
 
+}
+.active {
+  color: #428bca;
+  background-color: var(--secondary-color);
 }
   .tool-panel {
     height: 100%;

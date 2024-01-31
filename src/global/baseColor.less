@@ -4,6 +4,8 @@
 @cardBorderColor: #eee;
 @backgroundColor: white;
 @activeTextColor: rgb(229, 229, 16);
+@defaultFontSize: 16px;
+@secondFontSize: 14px;
 /* 设置默认主题色 */
 :root {
 	--color-primary: @default;
@@ -11,6 +13,8 @@
   --cardBorderColor: @cardBorderColor;
   --backgroundColor: @backgroundColor;
   --activeTextColor: @activeTextColor;
+  --font-primary-size: @defaultFontSize;
+  --font-second-size: @secondFontSize;
 }
 :root.theme_red {
 	--color-primary: #ee0a24;
@@ -22,4 +26,6 @@
 .text {
 	color: var(--color-primary);
 }
-
+.font {
+  font-size: 14px;
+}

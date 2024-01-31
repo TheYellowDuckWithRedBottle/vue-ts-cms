@@ -29,7 +29,7 @@ export interface Department {
 }
 
 export interface Data {
-  id: number
+  id: string
   name: string
   realname: string
   cellphone: number
@@ -38,4 +38,12 @@ export interface Data {
   updateAt: Date
   role: Role
   department: Department
+}
+export interface MapTemplate {
+  id: string|null
+  name: string
+  desc: string
+  title: string
+  cover: string
+  epsg: string
 }

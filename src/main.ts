@@ -28,7 +28,7 @@ import 'leaflet/dist/leaflet.css'
 import './global/baseColor.less' // 导入全局定义的主题色
 import App from './App.vue'
 import router from './router'
-import store from './store'
+
 
 library.add(faUser)
 library.add(faBars)
@@ -52,7 +52,6 @@ const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(globalRegister)
 app.use(router)
-app.use(store)
 app.config.globalProperties.$map = {}
 app.config.globalProperties.$L = {}
 

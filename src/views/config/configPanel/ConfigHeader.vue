@@ -11,7 +11,7 @@
       </div>
       <!-- 弹出添加地图模板的对话框 -->
       <div class="new-template">
-        <el-button type="primary" @click="addTemplate">新建</el-button>
+        <el-button type="primary" @click="dialogVisible = true">新建</el-button>
       </div>
       <el-dialog
         v-model="dialogVisible"
@@ -22,40 +22,38 @@
         <div class="form-body">
           <div class="template-file-name inputInfo">
             <label for="fileName">模板文件名称</label>
-            <input id="fileName" placeholder="填写文件名称" />
+            <input id="fileName" :value="newTemplate.fileName" placeholder="填写文件名称" />
           </div>
           <div class="template-name inputInfo">
             <label for="templateName">模板名称</label>
-            <input id="templateName" type="text" placeholder="填写模板名称" />
+            <input id="templateName" :value="newTemplate.templateName" type="text" placeholder="填写模板名称" />
           </div>
           <div class="template-desc inputInfo">
             <label for="templateDesc">模板描述</label>
-            <textarea name="textarea">填写模板描述</textarea>
+            <textarea name="textarea" :value="newTemplate.templateDesc">填写模板描述</textarea>
           </div>
           <div class="template-source inputInfo">
             <label> 模板来源</label>
-            <label for="blank"
-              ><input
-                type="radio"
-                id="blank"
-                name="sex"
-                value="blank"
-              />空白模板</label
-            >
-            <label for="exist"
-              ><input
-                for="exit"
-                id="exist"
-                type="radio"
-                name="sex"
-                value="exist"
-              />已存模板</label
-            >
+            <el-radio-group v-model="mapSource" class="ml-4">
+              <el-radio label="blank" size="large">空白模板</el-radio>
+              <el-radio label="exist" size="large">已存模板</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="mapSource == 'exist' && mapTemplates.length > 0" class="template-source inputInfo">
+            <label> 选择模板</label>
+            <el-select v-model="newTemplate.templateName"  placeholder="请选择模板">
+              <el-option
+                v-for="item in mapTemplates"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              ></el-option>
+            </el-select>
           </div>
         </div>
         <template #footer>
           <span class="dialog-footer">
-            <el-button type="primary" @click="dialogVisible = false">
+            <el-button type="primary"  @click="addTemplate">
               创建
             </el-button>
           </span>
@@ -97,11 +95,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { defineComponent, reactive, ref, toRefs,onMounted } from 'vue'
+import {getMapTemplates, addMapTemplate, deleteMapTemplate} from '@/service/login/login'
 import mapTemplate from './mapTemplate.vue'
 import configService from './ConfigServices.vue'
 import configAttribute from './ConfigAttribute.vue'
 import configFunction from './ConfigFunction.vue'
+import { MapTemplate } from '@/service/login/types'
 export default defineComponent({
   components: {
     mapTemplate,
@@ -115,14 +115,72 @@ export default defineComponent({
       dialogVisible: false,
       showConfigMapFun: false,
       tabs: ['模板列表','服务配置','功能配置','属性配置','缓存清理'],
-      currentTab:'服务配置'
+      currentTab:'服务配置',
+      mapTemplates:  [
+      {
+        cover: '',
+        name: '',
+        title: '',
+        desc: '',
+        epsg: '',
+      }
+    ],
+    newTemplate: {
+      fileName: '',
+      templateName: '',
+      templateDesc: '',
+    },
+    mapSource: 'blank'
     })
+    onMounted(async () => {
+      getAllMapTemplates()
+    })
+    async function getAllMapTemplates() {
+      const res = await getMapTemplates()
+      console.log(res)
+      state.mapTemplates = res.data
+    }
     function previewMap(mapTemplateInfo: any) {
       console.log(mapTemplateInfo)
     }
+    function changeTemplate (value: any) {
+      console.log(value)
+    }
     function addTemplate() {
-      console.log('a')
-      state.dialogVisible = true
+      let newTemplate: MapTemplate = {
+        id: '',
+        cover: '',
+        name: '',
+        title: '',
+        desc: '',
+        epsg: '',
+      }
+      if (state.mapSource == 'blank') {
+        const newTemplate = {
+          cover: '',
+          name: state.newTemplate.templateName,
+          title: state.newTemplate.templateName,
+          desc: state.newTemplate.templateDesc
+        }
+      } else {
+        const template = state.mapTemplates.find((item: any) => item.name == state.newTemplate.templateName)
+        if (!template) {
+          return
+        }
+        newTemplate = {
+          id:'',
+          cover: template.cover,
+          name: template.name,
+          title: template.title,
+          desc: template.desc,
+          epsg: template.epsg
+        }
+      }
+      const res = addMapTemplate(newTemplate)
+      if (res) {
+        getAllMapTemplates()
+      }
+      state.dialogVisible = false
     }
     // 点击底图模板的配置按钮
     function configCurrentMap (mapTemplate: any) {
@@ -152,18 +210,11 @@ export default defineComponent({
           break;
       }
     }
-    const mapTemplates = [
-      {
-        cover: '',
-        name: '',
-        title: '',
-        desc: ''
-      }
-    ]
-    return { mapTemplates,
+    return {
       previewMap,
       addTemplate,
       configCurrentMap,
+      changeTemplate,
       switchConfig,
       ...toRefs(state) }
   }
