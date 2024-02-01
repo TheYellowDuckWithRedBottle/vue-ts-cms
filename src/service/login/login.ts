@@ -5,11 +5,9 @@ axios.defaults.baseURL = BASE_URL
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
+    'Content-Type': 'application/json'
   },
-  timeout: 1000 * 10,
-  withCredentials: true
+  timeout: 1000 * 10
 })
 
 // 用户信息
