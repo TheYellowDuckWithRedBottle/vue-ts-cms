@@ -1,0 +1,29 @@
+name: build and test
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    -  name: checkout respository
+       uses: actions/checkout@v2
+    -  name:  setup node.js
+       uses: actions/setup-node@v2
+       with: 
+         node-version: '16.14'
+    - name: install depencies
+      run: npm install
+    - name: build
+      run: npm run build
+    - name: copy files to server
+      uses: appleboy/scp-acction@master
+      with: 
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME}}
+        password: ${{secrets.PASSWORD}}
+        port: 22
+        source: "build1/"
+        target: "/usr/share/nginx"
+      
