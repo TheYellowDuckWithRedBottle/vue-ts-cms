@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, computed, reactive } from 'vue'
 import Cache from '@/utility/Cache'
 
@@ -74,7 +74,9 @@ export default defineComponent({
     // store.state.login
     const isCollapse = false
     let userMenu = Cache.getCache('userMenu')
-    userMenu = reactive(props.menuData)
+    if (userMenu && typeof userMenu === 'string') {
+      userMenu = JSON.parse(userMenu)
+    }
     console.log(userMenu)
     const handleOpen = () => {
       console.log('open')
@@ -82,20 +84,23 @@ export default defineComponent({
     const handleClose = () => {
       console.log('close')
     }
-    const hoverMenuItem = (menuItem: any, index: number) => {
-      userMenu[index]['showChild'] = true
+    function hoverMenuItem(menuItem, index) {
+      if (userMenu && userMenu.length > 0) {
+        userMenu[index]['showChild'] = true
+      }
+
     }
-    const leaveMenuItem = (menuItem: any, index: number) => {
+    const leaveMenuItem = (menuItem, index) => {
       userMenu[index]['showChild'] = false
     }
-    const clickMenuItem = (menuItem: any, index: number, item: any) => {
+    const clickMenuItem = (menuItem, index, item) => {
       // 点击菜单，如果菜单有子菜单，不做任何操作
       if(menuItem.children && menuItem.children.length > 0){
         return
       }
       // 点击没有子菜单的顶级菜单或者子菜单，关闭所有子菜单
       userMenu[index]['showChild'] = false
-      userMenu.forEach((item: any) => {
+      userMenu.forEach((item) => {
         if(item.name === menuItem.name) {
           item.isActive = true
         } else {

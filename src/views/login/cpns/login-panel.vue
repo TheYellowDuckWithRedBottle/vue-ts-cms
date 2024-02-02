@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-
+import { defineComponent, ref,computed } from 'vue'
+import {useStore} from 'vuex'
 import LoginAccount from './login-account.vue'
 import LoginPhone from './login-phone.vue'
 
@@ -43,8 +43,10 @@ export default defineComponent({
     const accountRef = ref<InstanceType<typeof LoginAccount>>()
     const phoneRef = ref<InstanceType<typeof LoginPhone>>()
     const currentTab = ref('account')
+    const store = useStore()
+    const user = computed(() => store.getters.getUser)
 
-    const handleLoginClick = () => {
+    function handleLoginClick() {
       if (currentTab.value === 'account') {
         accountRef.value?.loginAction(isKeepPassword.value)
       } else {
@@ -58,7 +60,8 @@ export default defineComponent({
       handleLoginClick,
       accountRef,
       phoneRef,
-      currentTab
+      currentTab,
+      user
     }
   }
 })

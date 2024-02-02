@@ -12,17 +12,19 @@ const axiosInstance = axios.create({
 })
 
 // 用户信息
-export function loginAction(account: string, password: string) {
-  return axiosInstance.post('/login', {
-    account,
+export function loginAction(username: string, password: string) {
+  return axiosInstance.post('/user/login', {
+    username,
     password
   })
 }
 export function getUserInfo (id: string) {
   return axiosInstance.get('/user/user')
 }
-export function getUserMenu (id: string) {
-  return axiosInstance.get('/menus')
+export function getUserMenu (username: string) {
+  return axiosInstance.get('/user/menus', {
+    params: username
+  })
 }
 // 地图模板
 export async function getMapTemplates() {

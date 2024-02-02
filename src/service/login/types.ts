@@ -1,10 +1,10 @@
 export interface IAccount {
-  name: string
+  username: string
   password: any
 }
 export interface ILoginResult {
   id: string
-  name: string
+  username: string
   token: string
 }
 export interface IDataType<T> {
@@ -13,7 +13,7 @@ export interface IDataType<T> {
 }
 export interface Role {
   id: number
-  name: string
+  username: string
   intro: string
   createAt: Date
   updateAt: Date
@@ -30,7 +30,7 @@ export interface Department {
 
 export interface Data {
   id: string
-  name: string
+  username: string
   realname: string
   cellphone: number
   enable: number

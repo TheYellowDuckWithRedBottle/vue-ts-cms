@@ -1,8 +1,8 @@
 <template>
   <div class="login-account">
     <el-form label-width="60px" :rules="rules" :model="account" ref="formRef">
-      <el-form-item label="账号" prop="name">
-        <el-input v-model="account.name" />
+      <el-form-item label="账号" prop="username">
+        <el-input v-model="account.username" />
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input v-model="account.password" show-password />
@@ -22,7 +22,7 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const account = reactive({
-      name: localStorage.getCache('name') ?? '',
+      username: localStorage.getCache('username') ?? '',
       password: localStorage.getCache('password') ?? ''
     })
 
@@ -33,13 +33,13 @@ export default defineComponent({
         if (valid) {
           if (isKeepPassword) {
             //本地缓存
-            localStorage.setCache('name', account.name)
+            localStorage.setCache('username', account.username)
             localStorage.setCache('password', account.password)
           } else {
             //不记住密码
-            localStorage.removeCache('name')
+            localStorage.removeCache('username')
           }
-          store.dispatch('login/accountLoginAction', { ...account })
+          store.dispatch('loginUser', { ...account })
         }
       })
     }
