@@ -26,6 +26,6 @@ jobs:
         username: ${{ secrets.USERNAME}}
         password: ${{secrets.PASSWORD}}
         port: 22
-        source: "build1/"
+        source: "build/"
         target: "/usr/share/nginx"
       
