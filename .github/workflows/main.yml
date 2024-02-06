@@ -18,7 +18,7 @@ jobs:
     - name: install depencies
       run: yarn
     - name: build
-      run: npm run build
+      run: yarn build
     - name: copy files to server
       uses: appleboy/scp-action@master
       with: 
