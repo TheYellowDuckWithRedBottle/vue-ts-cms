@@ -28,6 +28,8 @@ export function getUserMenu (username: string) {
 }
 // 地图模板
 export async function getMapTemplates() {
+  // 设置请求头
+  axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
   return await axiosInstance.get('/MapTemplate/mapTemplates')
 }
 export async function deleteMapTemplate(id: string) {
