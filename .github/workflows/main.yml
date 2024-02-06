@@ -13,8 +13,10 @@ jobs:
        uses: actions/setup-node@v2
        with: 
          node-version: '16.14'
+    - name: action-yarn
+      uses: comchangs/action-yarn@v0.1-beta
     - name: install depencies
-      run: npm install
+      run: yarn
     - name: build
       run: npm run build
     - name: copy files to server
