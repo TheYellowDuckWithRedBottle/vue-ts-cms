@@ -88,7 +88,6 @@
       <div class="config-content">
         <configAttribute v-if="currentTab=='属性配置'"></configAttribute>
         <configService v-if="currentTab=='服务配置'"></configService>
-        <configFunction v-if="currentTab=='功能配置'"></configFunction>
       </div>
     </div>
   </div>
@@ -100,14 +99,13 @@ import {getMapTemplates, addMapTemplate, deleteMapTemplate} from '@/service/logi
 import mapTemplate from './mapTemplate.vue'
 import configService from './ConfigServices.vue'
 import configAttribute from './ConfigAttribute.vue'
-import configFunction from './ConfigFunction.vue'
 import { MapTemplate } from '@/service/login/types'
 export default defineComponent({
   components: {
     mapTemplate,
     configService,
     configAttribute,
-    configFunction
+  
   },
   setup() {
     let state = reactive({
