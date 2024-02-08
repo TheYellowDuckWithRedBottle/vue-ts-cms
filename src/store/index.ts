@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
 import {loginAction} from '@/service/login/login'
+import { ElMessage } from 'element-plus'
 import router from '@/router'
 const store = createStore({
   state: {
@@ -11,6 +12,7 @@ const store = createStore({
   },
   mutations:{
     setUser(state, user){
+      console.log(state,user)
       state.user = user
     }
   },
@@ -18,8 +20,8 @@ const store = createStore({
     async loginUser({commit}, user){
       // 向mutation发送修改user数据
        const response = await loginAction(user.username, user.password)
-       if (response.status === 200) {
-        if (response.data && typeof response.data === 'string') {
+       if (response.code === 200) {
+        if (response.msg==='success') {
           localStorage.setItem('token', response.data)
           const userInfo = {
             username: user.username,
@@ -28,8 +30,9 @@ const store = createStore({
           }
           commit('setUser', userInfo)
           router.push('/main')
+       } else {
+        ElMessage.error('登录失败')
        }
-
        }
 
     }

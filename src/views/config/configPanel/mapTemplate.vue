@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, toRefs } from 'vue'
+import router from '@/router'
 export default defineComponent({
   props: {
     mapTemplate: Object
@@ -57,7 +58,10 @@ export default defineComponent({
       console.log(mapTemplate)
     }
     function route2Map (mapTemplate: any) {
-      window.open("")
+      //  todo 带上id过去
+      console.log(mapTemplate)
+      const mapTemplateId = mapTemplate.id
+      router.push({ path: `/main` })
     }
     function configMapFunction (mapTemplate: any) {
       console.log(mapTemplate)

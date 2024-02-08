@@ -12,29 +12,29 @@ const axiosInstance = axios.create({
 })
 
 // 用户信息
-export function loginAction(username: string, password: string) {
-  return axiosInstance.post('/user/login', {
+export async function loginAction(username: string, password: string) {
+  return (await axiosInstance.post('/user/login', {
     username,
     password
-  })
+  })).data
 }
-export function getUserInfo (id: string) {
-  return axiosInstance.get('/user/user')
+export async function getUserInfo (id: string) {
+  return (await (axiosInstance.get('/user/user'))).data
 }
-export function getUserMenu (username: string) {
-  return axiosInstance.get('/user/menus', {
+export async function getUserMenu (username: string) {
+  return (await axiosInstance.get('/user/menus', {
     params: username
-  })
+  })).data
 }
 // 地图模板
 export async function getMapTemplates() {
   // 设置请求头
   axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
-  return await axiosInstance.get('/MapTemplate/mapTemplates')
+  return (await axiosInstance.get('/MapTemplate/mapTemplates')).data
 }
 export async function deleteMapTemplate(id: string) {
-  return await axiosInstance.delete(`/MapTemplate/${id}`)
+  return (await axiosInstance.delete(`/MapTemplate/${id}`)).data
 }
 export async function addMapTemplate(mapTemplate: MapTemplate) {
-  return await axiosInstance.post('/MapTemplate/createMapTemplate', mapTemplate)
+  return (await axiosInstance.post('/MapTemplate/createMapTemplate', mapTemplate)).data
 }
