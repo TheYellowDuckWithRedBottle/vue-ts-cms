@@ -1,6 +1,7 @@
 import {createStore} from 'vuex'
 import {loginAction} from '@/service/login/login'
 import router from '@/router'
+import axiosInstance from '@/service/login/login'
 const store = createStore({
   state: {
     user: {
@@ -18,7 +19,7 @@ const store = createStore({
     async loginUser({commit}, user){
       // 向mutation发送修改user数据
        const response = await loginAction(user.username, user.password)
-       if (response.status === 200) {
+       if (response.code === 200) {
         if (response.data && typeof response.data === 'string') {
           localStorage.setItem('token', response.data)
           const userInfo = {
@@ -26,6 +27,8 @@ const store = createStore({
             password: user.password,
             token: response.data
           }
+          // 把token设置到请求头
+          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
           commit('setUser', userInfo)
           router.push('/main')
        }
