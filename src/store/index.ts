@@ -1,6 +1,7 @@
 import {createStore} from 'vuex'
 import {loginAction} from '@/service/login/login'
 import router from '@/router'
+import axiosInstance from '@/service/login/login'
 const store = createStore({
   state: {
     user: {
@@ -26,6 +27,8 @@ const store = createStore({
             password: user.password,
             token: response.data
           }
+          // 把token设置到请求头
+          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
           commit('setUser', userInfo)
           router.push('/main')
        }

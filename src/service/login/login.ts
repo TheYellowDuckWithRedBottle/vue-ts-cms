@@ -38,3 +38,4 @@ export async function deleteMapTemplate(id: string) {
 export async function addMapTemplate(mapTemplate: MapTemplate) {
   return await axiosInstance.post('/MapTemplate/createMapTemplate', mapTemplate)
 }
+export default axiosInstance
