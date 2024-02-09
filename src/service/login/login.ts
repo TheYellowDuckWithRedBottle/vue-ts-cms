@@ -12,11 +12,11 @@ const axiosInstance = axios.create({
 })
 
 // 用户信息
-export function loginAction(username: string, password: string) {
-  return axiosInstance.post('/user/login', {
+export async function loginAction(username: string, password: string) {
+  return (await axiosInstance.post('/user/login', {
     username,
     password
-  })
+  })).data
 }
 export function getUserInfo (id: string) {
   return axiosInstance.get('/user/user')

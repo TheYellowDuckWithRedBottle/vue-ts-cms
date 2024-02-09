@@ -19,7 +19,7 @@ const store = createStore({
     async loginUser({commit}, user){
       // 向mutation发送修改user数据
        const response = await loginAction(user.username, user.password)
-       if (response.status === 200) {
+       if (response.code === 200) {
         if (response.data && typeof response.data === 'string') {
           localStorage.setItem('token', response.data)
           const userInfo = {
