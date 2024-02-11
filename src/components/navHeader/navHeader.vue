@@ -8,46 +8,59 @@
         <strong>标题</strong>
       </div>
     </div>
-    <!-- <testCom :lis="liDatas"></testCom> -->
     <div class="sys-user">
       <div class="sys-search">
         <input placeholder="搜索/功能" class="el-input" />
       </div>
       <div class="sys-login">
         <div class="user-icon">
-          <font-awesome-icon icon="fa-solid fa-user" />
+          <input type="file" id="avatar" @change="changeUserAvatar" class="file-input" name="avatar" accept="image/png, image/jpeg" >
+          <img :src=user.avatar alt="">
         </div>
-        <span class="username">{{ username }}</span>
+        <span class="username">{{ user.username }}</span>
+      </div>
+    </div>
+    <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog = false">
+      <div title="修改头像" class="avatar-dialog" >
+        <div class="avatar-header"> </div>
+        <div class="avatar-body">
+          <img :src=user.avatar alt="">
+        </div>
+        <div class="avatar-footer">
+          <button class="avatar-btn">设置新头像</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
-import testCom from './testCom.vue'
+import { ref , computed} from 'vue'
+import { useStore } from 'vuex'
 export default {
   components: {
     // testCom
   },
   setup() {
-    let username = '匿名用户'
-    let liDatas = [
-      {name: '小米', age: 30},
-      {name: '老白', age: 28},
-      {name: '秀才', age: 28}
-    ]
-    const input1 = ref('')
+    const store = useStore()
+    const user = computed(() => store.getters.getUser)
+    const showAvatarDialog = ref(false)
+    function changeUserAvatar (value:any) {
+      //1.打开form对话框，选择图片
+      console.log(value)
+      showAvatarDialog.value = true
+
+    }
     return {
-      username,
-      input1,
-      liDatas
+      user,
+      showAvatarDialog,
+      changeUserAvatar
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .nav-top-bar {
   box-sizing: border-box;
   width: 100%;
@@ -58,6 +71,60 @@ export default {
   background-color: var(--color-primary);
   color: var(--backgroundColor);
   padding: 10px;
+  .user-avatar-dialog {
+    // 垂直水平居中
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    .avatar-dialog {
+      position: absolute;
+      width: 30%;
+      height: 60%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: var(--borderRadius-medium);
+      background-color: var(--color-primary);
+      .avatar-header {
+        box-sizing: border-box;
+        width: 100%;
+        height: 50px;
+        border-bottom: 1px solid var(--heading-color);
+        display: flex;
+        justify-content: space-between;
+        padding: 16px;
+        color: var(--heading-color)
+      }
+      .avatar-body {
+        box-sizing: border-box;
+        width: 100%;
+        height: calc(100% - 100px);
+        padding: 16px;
+        overflow: hidden;
+      }
+      .avatar-footer {
+        box-sizing: border-box;
+        width: 100%;
+        height: 65px;
+        border-top: 1px solid var(--heading-color);
+        display: flex;
+        justify-content: flex-end;
+        padding: 16px;
+        color: var(--heading-color);
+        .avatar-btn {
+          display: inline-block;
+          background-color: var(--color-primary);
+          width: 100%;
+        }
+      }
+    }
+
+  }
 }
 .nav-sys {
   display: flex;
@@ -89,9 +156,31 @@ span {
   height: 100%;
   padding-left: 8px;
   font-size: 14px;
+  span {
+    cursor: pointer;
+  }
 }
 .user-icon {
-  padding-right: 8px;
+  width: 25px;
+  height: 25px;
+  position: relative;;
+  .file-input {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+  }
+  img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    cursor: pointer;
+    // z-index: 1;
+    background: navajowhite;
+  }
 }
 .sys-search {
   height: 100%;
