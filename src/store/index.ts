@@ -2,6 +2,7 @@ import {createStore} from 'vuex'
 import {loginAction} from '@/service/login/login'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
+import axiosInstance from '@/service/login/login'
 const store = createStore({
   state: {
     user: {
@@ -22,12 +23,15 @@ const store = createStore({
        const response = await loginAction(user.username, user.password)
        if (response.code === 200) {
         if (response.msg==='success') {
+
           localStorage.setItem('token', response.data)
           const userInfo = {
             username: user.username,
             password: user.password,
             token: response.data
           }
+          // 把token设置到请求头
+          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
           commit('setUser', userInfo)
           router.push('/main')
        } else {
