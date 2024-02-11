@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
 import {loginAction} from '@/service/login/login'
+import { ElMessage } from 'element-plus'
 import router from '@/router'
 import axiosInstance from '@/service/login/login'
 const store = createStore({
@@ -12,6 +13,7 @@ const store = createStore({
   },
   mutations:{
     setUser(state, user){
+      console.log(state,user)
       state.user = user
     }
   },
@@ -20,7 +22,8 @@ const store = createStore({
       // 向mutation发送修改user数据
        const response = await loginAction(user.username, user.password)
        if (response.code === 200) {
-        if (response.data && typeof response.data === 'string') {
+        if (response.msg==='success') {
+
           localStorage.setItem('token', response.data)
           const userInfo = {
             username: user.username,
@@ -31,8 +34,9 @@ const store = createStore({
           axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token') || ''
           commit('setUser', userInfo)
           router.push('/main')
+       } else {
+        ElMessage.error('登录失败')
        }
-
        }
 
     }

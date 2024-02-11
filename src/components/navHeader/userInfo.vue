@@ -64,21 +64,9 @@ export default defineComponent({
           }
         ]
       })
-      function modifyTree(treeData) {
-        for(var i = treeData.length-1;i>0;i--) {
-          if(treeData[i].children && Array.isArray(treeData[i].children)){
-            if(treeData[i].children.length ===0){
-              treeData.splice(i,1)
-            }else{
-              modifyTree(treeData[i].children)
-            }
-          }
-        }
-      }
 
       const clickItem = (item) => {
 
-        modifyTree(state.treeData)
         console.log(state.treeData)
         state.currentIndex = item.name
       }

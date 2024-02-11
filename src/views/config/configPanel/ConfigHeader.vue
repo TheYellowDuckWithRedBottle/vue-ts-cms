@@ -100,12 +100,13 @@ import mapTemplate from './mapTemplate.vue'
 import configService from './ConfigServices.vue'
 import configAttribute from './ConfigAttribute.vue'
 import { MapTemplate } from '@/service/login/types'
+import router from '@/router/index'
 export default defineComponent({
   components: {
     mapTemplate,
     configService,
     configAttribute,
-  
+
   },
   setup() {
     let state = reactive({
@@ -139,7 +140,10 @@ export default defineComponent({
       state.mapTemplates = res.data
     }
     function previewMap(mapTemplateInfo: any) {
+      const mapTemplateId = mapTemplateInfo.id
       console.log(mapTemplateInfo)
+      router.push({ path: `/main` })
+
     }
     function changeTemplate (value: any) {
       console.log(value)
