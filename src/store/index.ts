@@ -1,5 +1,5 @@
 import {createStore} from 'vuex'
-import {loginAction} from '@/service/login/login'
+import {loginAction,updateUserAvatar} from '@/service/login/login'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import axiosInstance from '@/service/login/login'
@@ -39,7 +39,18 @@ const store = createStore({
        }
        }
 
-    }
+    },
+    async setUserAvatar ({commit}, user){
+      const response =  await updateUserAvatar(user.username, user.avatar)
+        if (response.code === 200) {
+          if (response.msg === 'true') {
+            ElMessage.success('上传成功')
+            commit('setUser', user)
+          } else {
+            ElMessage.error('上传失败')
+          }
+        }
+      }
   },
   getters:{
     getUser: state => state.user

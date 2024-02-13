@@ -21,13 +21,13 @@
       </div>
     </div>
     <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog = false">
-      <div title="修改头像" class="avatar-dialog" >
-        <div class="avatar-header"> </div>
+      <div  class="avatar-dialog" >
+        <div class="avatar-header">裁剪头像 </div>
         <div class="avatar-body">
-          <img :src=user.avatar alt="">
+          <img :src="user.avatar" alt="">
         </div>
         <div class="avatar-footer">
-          <button class="avatar-btn">设置新头像</button>
+          <button class="avatar-btn" @click = "setNewAvatar">设置新头像</button>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { ref , computed} from 'vue'
+import { ref , computed, reactive} from 'vue'
 import { useStore } from 'vuex'
 export default {
   components: {
@@ -43,18 +43,40 @@ export default {
   },
   setup() {
     const store = useStore()
-    const user = computed(() => store.getters.getUser)
+    const storeUser = computed(() => store.getters.getUser)
+    const state = reactive({
+      showAvatarDialog: false,
+      user: {
+        username: storeUser.value.username,
+        avatar: storeUser.value.avatar
+      }
+    })
     const showAvatarDialog = ref(false)
     function changeUserAvatar (value:any) {
       //1.打开form对话框，选择图片
-      console.log(value)
       showAvatarDialog.value = true
-
+      // 2.将图片转换为base64
+      const file = value.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      try {
+        reader.onload = function (e) {
+          state.user.avatar = e.target?.result
+        }
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    function setNewAvatar () {
+      console.log('state.user', state.user)
+      store.dispatch('setUserAvatar', state.user)
+      showAvatarDialog.value = false
     }
     return {
-      user,
+      ...state,
       showAvatarDialog,
-      changeUserAvatar
+      changeUserAvatar,
+      setNewAvatar
     }
   }
 }
@@ -87,9 +109,10 @@ export default {
       height: 60%;
       top: 50%;
       left: 50%;
+      font-weight: bold;
       transform: translate(-50%, -50%);
       border-radius: var(--borderRadius-medium);
-      background-color: var(--color-primary);
+      background-color: var(--background-white);
       .avatar-header {
         box-sizing: border-box;
         width: 100%;
@@ -103,7 +126,7 @@ export default {
       .avatar-body {
         box-sizing: border-box;
         width: 100%;
-        height: calc(100% - 100px);
+        height: calc(100% - 115px);
         padding: 16px;
         overflow: hidden;
       }
@@ -118,8 +141,12 @@ export default {
         color: var(--heading-color);
         .avatar-btn {
           display: inline-block;
+          color: var(--background-white);
+          border: 1px solid #fff; 
+          border-radius: var(--borderRadius-medium);
           background-color: var(--color-primary);
           width: 100%;
+          cursor: pointer;
         }
       }
     }
