@@ -21,6 +21,14 @@ export async function loginAction(username: string, password: string) {
 export async function getUserInfo (id: string) {
   return (await (axiosInstance.get('/user/user'))).data
 }
+export async function getUserInfoByName(username: string) {
+   const params = {
+    username
+  }
+  return (await axiosInstance.get('/user/getUserByName', {
+    params
+  })).data
+}
 export async function getUserMenu (username: string) {
   return (await axiosInstance.get('/user/menus', {
     params: username

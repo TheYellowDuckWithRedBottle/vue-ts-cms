@@ -44,6 +44,7 @@ export default {
   setup() {
     const store = useStore()
     const storeUser = computed(() => store.getters.getUser)
+    console.log('navheader')
     const state = reactive({
       showAvatarDialog: false,
       user: {
@@ -68,7 +69,6 @@ export default {
       }
     }
     function setNewAvatar () {
-      console.log('state.user', state.user)
       store.dispatch('setUserAvatar', state.user)
       showAvatarDialog.value = false
     }

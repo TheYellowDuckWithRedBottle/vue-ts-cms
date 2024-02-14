@@ -16,12 +16,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, onMounted, getCurrentInstance } from 'vue'
+import { defineComponent, reactive, ref, toRefs, onMounted, getCurrentInstance,computed } from 'vue'
 import NavMenu from '@/components/navMenu/navMenu.vue'
 import navHeader from '@/components/navHeader/navHeader.vue'
 import navTopTool from '@/components/navTopTool/navTopTool.vue'
 import menuPanel from '@/components/menuPanel/menuPanel.vue'
 import mapContainer from '@/components/mapContainer/mapContainer.vue'
+import store from '@/store'
+import { getUserInfoByName } from '@/service/login/login'
 type Menu = {
   name: string
   title: string
@@ -60,10 +62,8 @@ export default defineComponent({
     isCollapse:true
     })
     onMounted(() => {
-      console.log(childRef.value)
-      console.log(grandChildRef.value)
+      const storeUser = computed(() => store.getters.getUser)
     })
-
     function collapseMenu(value: boolean) {
       state.isCollapse = value
     }

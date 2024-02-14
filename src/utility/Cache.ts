@@ -2,7 +2,7 @@ class LoacalStorage {
   getCache(key: string) {
     const value = window.localStorage.getItem(key)
     if (value) {
-      return value || []
+      return value
     }
   }
   setCache(key: string, value: any) {
