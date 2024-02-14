@@ -26,6 +26,17 @@ export async function getUserMenu (username: string) {
     params: username
   })).data
 }
+export async function updateUserAvatar(username: string ,avatar: string){
+  const user = {
+    id: 'string',
+    username: username,
+    email: '',
+    phone: '',
+    role: '',
+    avatar: avatar
+  }
+  return (await axiosInstance.post('/user/updateUserAvatar', user)).data
+}
 // 地图模板
 export async function getMapTemplates() {
   // 设置请求头
