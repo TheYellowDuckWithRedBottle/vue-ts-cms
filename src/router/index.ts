@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import cache from '@/utility/Cache'
-
+import { getUserInfoByName } from '@/service/login/login'
+import store from '@/store'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -35,10 +35,32 @@ const router = createRouter({
   routes,
   history: createWebHashHistory()
 })
-
-router.beforeEach((to) => {
+async function getUserInfo(username: string) {
+  if (username) {
+    const result = await getUserInfoByName(username)
+    if (result && result.code == '200') {
+      if (result.data) {
+        const userInfo = result.data
+        const user = {
+          username: userInfo.username,
+          avatar: userInfo.avatar,
+          role: userInfo.role,
+          menu: userInfo.menu
+        }
+        store.commit('setUser', user);
+      }
+    }
+  }
+}
+router.beforeEach(async (to) => {
   if (to.path !== '/login') {
-    if (!cache.getCache('token')) {
+    if (localStorage.getItem('token')) {
+      const username = localStorage.getItem('username')
+      if (username) {
+        store.commit('setUserName', username)
+        getUserInfo(username)
+      }
+    } else {
       router.push('/login')
     }
   }
