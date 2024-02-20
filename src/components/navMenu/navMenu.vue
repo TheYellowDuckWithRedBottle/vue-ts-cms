@@ -55,8 +55,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, reactive } from 'vue'
-import Cache from '@/utility/Cache'
+import { defineComponent, computed, reactive, toRefs } from 'vue'
 
 export default defineComponent({
   props: {
@@ -73,10 +72,10 @@ export default defineComponent({
     // const store = userStore<IRootState>()
     // store.state.login
     const isCollapse = false
-    let userMenu = Cache.getCache('userMenu')
-    if (userMenu && typeof userMenu === 'string') {
-      userMenu = JSON.parse(userMenu)
-    }
+    const userMenu = reactive(props).menuData
+    userMenu.forEach((item) => {
+      item.showChild = false
+    })
     console.log(userMenu)
     const handleOpen = () => {
       console.log('open')
