@@ -20,11 +20,19 @@
         <span class="username">{{ user.username }}</span>
       </div>
     </div>
-    <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog = false">
-      <div  class="avatar-dialog" >
+    <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog=false">
+      <div  class="avatar-dialog" @click.stop="clickAvatar">
         <div class="avatar-header">裁剪头像 </div>
         <div class="avatar-body">
-          <img :src="user.avatar" alt="">
+          <div class="crop-box-container" style="width: 100%;height:100%;position:relative">
+            <img :src="user.avatar" ref="cropImage"  alt="">
+            <div class="crop-box" ref="cropBox" >
+              <div class="crop-box-inner nw" ref="nw" @mousedown="mouseStartHandle($event, 'nw')" @mousemove="mouseMoveHandle($event, 'nw')" @mouseup="mouseupHandle($event, 'nw')"></div>
+              <div class="crop-box-inner ne" ref="ne" @mousedown="mouseStartHandle($event, 'ne')" @mousemove="mouseMoveHandle($event, 'ne')" @mouseup="mouseupHandle($event, 'ne')"></div>
+              <div class="crop-box-inner sw" ref="sw" @mousedown="mouseStartHandle($event, 'sw')" @mousemove="mouseMoveHandle($event, 'sw')" @mouseup="mouseupHandle($event, 'sw')"></div>
+              <div class="crop-box-inner se" ref="se" @mousedown="mouseStartHandle($event, 'se')" @mousemove="mouseMoveHandle($event, 'se')" @mouseup="mouseupHandle($event, 'se')"></div>
+            </div>
+          </div>
         </div>
         <div class="avatar-footer">
           <button class="avatar-btn" @click = "setNewAvatar">设置新头像</button>
@@ -34,26 +42,30 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { ref , computed, reactive} from 'vue'
 import { useStore } from 'vuex'
 export default {
   components: {
-    // testCom
   },
   setup() {
     const store = useStore()
     const storeUser = computed(() => store.getters.getUser)
-    console.log('navheader')
     const state = reactive({
       showAvatarDialog: false,
       user: {
         username: storeUser.value.username,
         avatar: storeUser.value.avatar
-      }
+      },
     })
+    let startTouch = ref(false)
+    const cropImage = ref(null)
+    const nw= ref(null)
+    const ne= ref(null)
+    const sw= ref(null)
+    const se= ref(null)
     const showAvatarDialog = ref(false)
-    function changeUserAvatar (value:any) {
+    function changeUserAvatar (value) {
       //1.打开form对话框，选择图片
       showAvatarDialog.value = true
       // 2.将图片转换为base64
@@ -72,11 +84,60 @@ export default {
       store.dispatch('setUserAvatar', state.user)
       showAvatarDialog.value = false
     }
+    function clickAvatar () {
+      showAvatarDialog.value = true
+    }
+    function mouseStartHandle (event, direction) {
+      startTouch.value = true
+      console.log(event, direction)
+    }
+    function mouseMoveHandle (event,direction) {
+      if(startTouch.value) {
+        // cropImage要裁剪的图片
+      // 根据event移动的距离，重新计算 sw 和 se 的位置，然后重新渲染
+        if (cropImage.value && cropImage.value) {
+          const dom = (cropImage.value)
+          const domRect = dom.getBoundingClientRect()[0]
+          const originX = domRect.x
+          const originY = domRect.y
+          const distanceX = event.x - originX
+          const distanceY = event.y - originY
+          sw.value.style.left = distanceX + 'px'
+          sw.value.style.top = distanceY + 'px'
+        }
+        switch (direction) {
+          case 'nw':
+            break
+          case 'ne':
+            break
+          case 'sw':
+            break
+          case 'se':
+            break
+        }
+      }
+    }
+    function changeClipRectangle(direction) {
+
+    }
+    function mouseupHandle (event,direction) {
+      console.log('up')
+      startTouch.value = false
+    }
     return {
       ...state,
       showAvatarDialog,
+      cropImage,
+      nw,
+      ne,
+      sw,
+      se,
       changeUserAvatar,
-      setNewAvatar
+      setNewAvatar,
+      clickAvatar,
+      mouseStartHandle,
+      mouseMoveHandle,
+      mouseupHandle,
     }
   }
 }
@@ -129,6 +190,57 @@ export default {
         height: calc(100% - 115px);
         padding: 16px;
         overflow: hidden;
+        .crop-box-container {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          .crop-box {
+            position: absolute;
+            overflow: hidden;
+            top:0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            cursor:move;
+            background: rgba(255,255,255,0.5);
+
+            .crop-box-inner {
+              position: absolute;
+              padding: 4px;
+            }
+            .crop-box-inner::before{
+              position: absolute;
+              display: block;
+              padding: 4px;
+              border-radius: 50%;
+              transform: translate(-50%, -50%);
+              content: '';
+              background: #fff;
+              border: 1px solid #767676;
+            }
+            .nw {
+              top: 0;
+              left: 0;
+              cursor:nw-resize;
+            }
+            .ne {
+              top:0;
+              right: 0;
+              cursor:ne-resize;
+            }
+            .sw {
+              bottom: 0;
+              left: 0;
+              cursor:sw-resize;
+            }
+            .se {
+              bottom: 0;
+              right: 0;
+              cursor:se-resize;
+            }
+          }
+        }
       }
       .avatar-footer {
         box-sizing: border-box;
@@ -142,7 +254,7 @@ export default {
         .avatar-btn {
           display: inline-block;
           color: var(--background-white);
-          border: 1px solid #fff; 
+          border: 1px solid #fff;
           border-radius: var(--borderRadius-medium);
           background-color: var(--color-primary);
           width: 100%;
