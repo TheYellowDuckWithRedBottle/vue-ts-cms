@@ -93,27 +93,52 @@ export default {
     }
     function mouseMoveHandle (event,direction) {
       if(startTouch.value) {
-        // cropImage要裁剪的图片
       // 根据event移动的距离，重新计算 sw 和 se 的位置，然后重新渲染
         if (cropImage.value && cropImage.value) {
           const dom = (cropImage.value)
-          const domRect = dom.getBoundingClientRect()[0]
-          const originX = domRect.x
-          const originY = domRect.y
-          const distanceX = event.x - originX
-          const distanceY = event.y - originY
-          sw.value.style.left = distanceX + 'px'
-          sw.value.style.top = distanceY + 'px'
-        }
-        switch (direction) {
-          case 'nw':
-            break
-          case 'ne':
-            break
-          case 'sw':
-            break
-          case 'se':
-            break
+          const domRect = dom.getBoundingClientRect()
+          const originX = domRect.x // dom的x坐标
+          const originY = domRect.y // dom的y坐标
+          console.log('原点', originX,originY)
+          const width = domRect.width  // dom的宽度
+          const height = domRect.height // dom的高度
+          switch (direction) {
+            case 'nw':
+                if (event.x > originX && event.y > originY) {
+                  if (event.x < originX + width && event.y < originY + height) {
+                    console.log('鼠标点', event.x,event.y)
+                    // 移动
+                    const distanceX = event.x - originX
+                    const distanceY = event.y - originY
+                    nw.value.style.left = distanceX + 'px'
+                    nw.value.style.top = distanceY + 'px'
+                    ne.value.style.top = distanceY + 'px'// 右上角的点也要变化
+                    sw.value.style.left = distanceX + 'px' // 左下角也要变化
+                    console.log('nw', nw.value.style.left,nw.value.style.top)
+                  }
+                } else {
+                  startTouch.value = false
+                }
+              break
+            case 'ne':
+              if (event.x > originX && event.y > originY) {
+                if (event.x < originX + width && event.y < originY + height) {
+                  console.log('鼠标点', event.x,event.y)
+                  // 移动
+                  const distanceX =  event.x
+                  const distanceY = event.y
+                  ne.value.style.left = distanceX + 'px'
+                  ne.value.style.top =  distanceY + 'px'
+                  nw.value.top = distanceY + 'px'
+                  se.value.left = distanceX + 'px'
+              }
+          }
+              break
+            case 'sw':
+              break
+            case 'se':
+              break
+          }
         }
       }
     }
