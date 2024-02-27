@@ -26,7 +26,8 @@
         <div class="avatar-body">
           <div class="crop-box-container" style="width: 100%;height:100%;position:relative">
             <img :src="user.avatar" ref="cropImage"  alt="">
-            <div class="crop-box" ref="cropBox" >
+            <div class="crop-box">
+              <div class="crop-outline" ref="cropBox" style="background-color: rgba(255, 255, 255, 0.5); cursor:move" @mousedown="clickCropBox($event)" @mousemove="moveBox($event)" @mouseup="stopCropBox($event)"></div>
               <div class="crop-box-inner nw" ref="nw" @mousedown="mouseStartHandle($event, 'nw')" @mousemove="mouseMoveHandle($event, 'nw')" @mouseup="mouseupHandle($event, 'nw')"></div>
               <div class="crop-box-inner ne" ref="ne" @mousedown="mouseStartHandle($event, 'ne')" @mousemove="mouseMoveHandle($event, 'ne')" @mouseup="mouseupHandle($event, 'ne')"></div>
               <div class="crop-box-inner sw" ref="sw" @mousedown="mouseStartHandle($event, 'sw')" @mousemove="mouseMoveHandle($event, 'sw')" @mouseup="mouseupHandle($event, 'sw')"></div>
@@ -59,11 +60,13 @@ export default {
       },
     })
     let startTouch = ref(false)
+    let moveCropBox = ref(false)
     const cropImage = ref(null)
     const nw= ref(null)
     const ne= ref(null)
     const sw= ref(null)
     const se= ref(null)
+    const cropBox = ref(null)
     const showAvatarDialog = ref(false)
     function changeUserAvatar (value) {
       //1.打开form对话框，选择图片
@@ -87,13 +90,13 @@ export default {
     function clickAvatar () {
       showAvatarDialog.value = true
     }
+    // 点击四个边角
     function mouseStartHandle (event, direction) {
       startTouch.value = true
       console.log(event, direction)
     }
     function mouseMoveHandle (event,direction) {
       if(startTouch.value) {
-      // 根据event移动的距离，重新计算 sw 和 se 的位置，然后重新渲染
         if (cropImage.value && cropImage.value) {
           const dom = (cropImage.value)
           const domRect = dom.getBoundingClientRect()
@@ -112,6 +115,15 @@ export default {
                     const distanceY = event.y - originY
                     nw.value.style.left = distanceX + 'px'
                     nw.value.style.top = distanceY + 'px'
+                    // 设置cropBox
+                    cropBox.value.style.left = distanceX + 'px'
+                    cropBox.value.style.top = distanceY + 'px'
+                    cropBox.value.style.bottom = 0 + 'px'
+                    cropBox.value.style.right = 0 + 'px'
+                    cropBox.value.style.position = 'absolute'
+                    cropBox.value.style.width = width - distanceX + 'px'
+                    cropBox.value.style.height = height - distanceY + 'px'
+
                     ne.value.style.top = distanceY + 'px'// 右上角的点也要变化
                     sw.value.style.left = distanceX + 'px' // 左下角也要变化
                     console.log('nw', nw.value.style.left,nw.value.style.top)
@@ -125,8 +137,8 @@ export default {
                 if (event.x < originX + width && event.y < originY + height) {
                   console.log('鼠标点', event.x,event.y)
                   // 移动
-                  const distanceX =  event.x
-                  const distanceY = event.y
+                  const distanceX =  event.x - originX + width
+                  const distanceY = event.y - originY
                   ne.value.style.left = distanceX + 'px'
                   ne.value.style.top =  distanceY + 'px'
                   nw.value.top = distanceY + 'px'
@@ -142,12 +154,41 @@ export default {
         }
       }
     }
-    function changeClipRectangle(direction) {
-
-    }
     function mouseupHandle (event,direction) {
       console.log('up')
       startTouch.value = false
+    }
+    // 点击裁剪框
+    function clickCropBox (event) {
+      moveCropBox.value = true
+    }
+    function moveBox (event) {
+      // 拖拽裁剪框并调整四个角点的位置
+      if (moveCropBox.value) {
+        console.log('move')
+
+      // 计算鼠标相对于拖拽元素的偏移量
+      const offsetX =event.x-cropBox.value.getBoundingClientRect().left
+      const offsetY =event.y-cropBox.value.getBoundingClientRect().top
+      console.log(offsetX,offsetY)
+      // 计算鼠标在目标元素中的位置
+      const x = event.x - cropImage.value.getBoundingClientRect().left - offsetX
+      const y = event.y - cropImage.value.getBoundingClientRect().top - offsetY
+
+      // 设置拖拽元素的位置
+      cropBox.value.style.left = cropBox.value.left + offsetX + 'px'
+      cropBox.value.style.top = cropBox.value.top + offsetY + 'px'
+      // 计算四个角点的位置
+      nw.value.style.left =  'px'
+      nw.value.style.top = y + 'px'
+      ne.value.style.left = x + cropBox.value.style.width + 'px'
+      ne.value.style.top = y + 'px'
+      sw.value.style.left = x + 'px'
+      sw.value.style.top = y + cropBox.value.style.height + 'px'
+      }
+    }
+    function stopCropBox (event) {
+      moveCropBox.value = false
     }
     return {
       ...state,
@@ -157,12 +198,16 @@ export default {
       ne,
       sw,
       se,
+      cropBox,
       changeUserAvatar,
       setNewAvatar,
       clickAvatar,
       mouseStartHandle,
       mouseMoveHandle,
       mouseupHandle,
+      clickCropBox,
+      moveBox,
+      stopCropBox
     }
   }
 }
@@ -227,7 +272,6 @@ export default {
             width: 100%;
             height: 100%;
             aspect-ratio: 1 / 1;
-            cursor:move;
             background: rgba(255,255,255,0.5);
 
             .crop-box-inner {
