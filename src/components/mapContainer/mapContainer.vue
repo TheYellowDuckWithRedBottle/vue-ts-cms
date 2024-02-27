@@ -27,14 +27,11 @@ export default defineComponent({
       const scale = getScaleByResolution(305.40584370960335)
       const resolution = getResolutionByScale(50000)
       const instance = getCurrentInstance()
-      debugger
-      
-      
       positionControl()
       var map = L.map('map', {
         attributionControl: false,
         zoomControl: false
-      }).setView([32, 120.84], 16)
+      }).setView([34.966787, 135.868734], 16)
       var zoomControl = L.control.zoom({ position: 'bottomright' })
       var scaleControl = L.control.scale({ metric: true, imperial: false })
       var pos = L.control.pos({ position: 'bottomleft' })

@@ -53,7 +53,7 @@ export default defineComponent({
           { name: 'tdlyxz', title: '土地利用现状' }
         ]
       },
-      { name: 'attribute', title: '属性' },
+      { name: 'collect', title: '收藏' },
       { name: 'query', title: '查询' },
       { name: 'measure', title: '量测' },
       { name: 'import', title: '导入' }
