@@ -25,13 +25,7 @@
         <div class="avatar-header">裁剪头像 </div>
         <div class="avatar-body">
           <div class="crop-box-container" style="width: 100%;height:100%;position:relative">
-            <img :src="user.avatar" ref="cropImage"  alt="">
-            <div class="crop-box" ref="cropBox" >
-              <div class="crop-box-inner nw" ref="nw" @mousedown="mouseStartHandle($event, 'nw')" @mousemove="mouseMoveHandle($event, 'nw')" @mouseup="mouseupHandle($event, 'nw')"></div>
-              <div class="crop-box-inner ne" ref="ne" @mousedown="mouseStartHandle($event, 'ne')" @mousemove="mouseMoveHandle($event, 'ne')" @mouseup="mouseupHandle($event, 'ne')"></div>
-              <div class="crop-box-inner sw" ref="sw" @mousedown="mouseStartHandle($event, 'sw')" @mousemove="mouseMoveHandle($event, 'sw')" @mouseup="mouseupHandle($event, 'sw')"></div>
-              <div class="crop-box-inner se" ref="se" @mousedown="mouseStartHandle($event, 'se')" @mousemove="mouseMoveHandle($event, 'se')" @mouseup="mouseupHandle($event, 'se')"></div>
-            </div>
+            <img :src="user.avatar" id="avatarImage" ref="cropImage"  alt="">
           </div>
         </div>
         <div class="avatar-footer">
@@ -45,6 +39,8 @@
 <script>
 import { ref , computed, reactive} from 'vue'
 import { useStore } from 'vuex'
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 export default {
   components: {
   },
@@ -58,12 +54,8 @@ export default {
         avatar: storeUser.value.avatar
       },
     })
-    let startTouch = ref(false)
     const cropImage = ref(null)
-    const nw= ref(null)
-    const ne= ref(null)
-    const sw= ref(null)
-    const se= ref(null)
+    let cropper = null
     const showAvatarDialog = ref(false)
     function changeUserAvatar (value) {
       //1.打开form对话框，选择图片
@@ -75,94 +67,51 @@ export default {
       try {
         reader.onload = function (e) {
           state.user.avatar = e.target?.result
+          const image = document.getElementById('avatarImage')
+          image.src = e.target?.result
+          cropper = new Cropper(image, {
+            viewMode:3,
+            dragMode: 'move',
+            aspectRatio: 1/1,
+            initialAspectRatio: 1,
+            autoCrop: 0.6,
+            movable: true,
+            rotatable: true
+          });
         }
       } catch (error) {
         console.log('error', error)
       }
     }
     function setNewAvatar () {
-      store.dispatch('setUserAvatar', state.user)
-      showAvatarDialog.value = false
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        const user = {
+          username: state.user.username,
+          avatar: ''
+        }
+        const reader = new FileReader();
+        // 监听读取完成事件
+        reader.onloadend = function() {
+          // 获取Base64字符串（去掉前缀）
+          const base64String = reader.result.split(',')[1];
+          console.log(base64String);
+          user.avatar = base64String
+          store.dispatch('setUserAvatar', user)
+          showAvatarDialog.value = false
+        };
+        reader.readAsDataURL(blob)
+      })
     }
     function clickAvatar () {
       showAvatarDialog.value = true
-    }
-    function mouseStartHandle (event, direction) {
-      startTouch.value = true
-      console.log(event, direction)
-    }
-    function mouseMoveHandle (event,direction) {
-      if(startTouch.value) {
-      // 根据event移动的距离，重新计算 sw 和 se 的位置，然后重新渲染
-        if (cropImage.value && cropImage.value) {
-          const dom = (cropImage.value)
-          const domRect = dom.getBoundingClientRect()
-          const originX = domRect.x // dom的x坐标
-          const originY = domRect.y // dom的y坐标
-          console.log('原点', originX,originY)
-          const width = domRect.width  // dom的宽度
-          const height = domRect.height // dom的高度
-          switch (direction) {
-            case 'nw':
-                if (event.x > originX && event.y > originY) {
-                  if (event.x < originX + width && event.y < originY + height) {
-                    console.log('鼠标点', event.x,event.y)
-                    // 移动
-                    const distanceX = event.x - originX
-                    const distanceY = event.y - originY
-                    nw.value.style.left = distanceX + 'px'
-                    nw.value.style.top = distanceY + 'px'
-                    ne.value.style.top = distanceY + 'px'// 右上角的点也要变化
-                    sw.value.style.left = distanceX + 'px' // 左下角也要变化
-                    console.log('nw', nw.value.style.left,nw.value.style.top)
-                  }
-                } else {
-                  startTouch.value = false
-                }
-              break
-            case 'ne':
-              if (event.x > originX && event.y > originY) {
-                if (event.x < originX + width && event.y < originY + height) {
-                  console.log('鼠标点', event.x,event.y)
-                  // 移动
-                  const distanceX =  event.x
-                  const distanceY = event.y
-                  ne.value.style.left = distanceX + 'px'
-                  ne.value.style.top =  distanceY + 'px'
-                  nw.value.top = distanceY + 'px'
-                  se.value.left = distanceX + 'px'
-              }
-          }
-              break
-            case 'sw':
-              break
-            case 'se':
-              break
-          }
-        }
-      }
-    }
-    function changeClipRectangle(direction) {
-
-    }
-    function mouseupHandle (event,direction) {
-      console.log('up')
-      startTouch.value = false
     }
     return {
       ...state,
       showAvatarDialog,
       cropImage,
-      nw,
-      ne,
-      sw,
-      se,
       changeUserAvatar,
       setNewAvatar,
       clickAvatar,
-      mouseStartHandle,
-      mouseMoveHandle,
-      mouseupHandle,
     }
   }
 }
@@ -227,8 +176,6 @@ export default {
             width: 100%;
             height: 100%;
             aspect-ratio: 1 / 1;
-            cursor:move;
-            background: rgba(255,255,255,0.5);
 
             .crop-box-inner {
               position: absolute;
