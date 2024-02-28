@@ -105,7 +105,6 @@ export default {
     function clickAvatar () {
       showAvatarDialog.value = true
     }
-
     return {
       ...state,
       showAvatarDialog,
