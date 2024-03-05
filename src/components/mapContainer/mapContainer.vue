@@ -49,12 +49,12 @@ export default defineComponent({
       //   url: 'http://localhost:6080/arcgis/rest/services/NT/LBHB/MapServer',
       //   opacity: 0.5
       // })
-      // console.log(dynamicLayer)
+
       // map.addLayer(dynamicLayer)
       // map.on('mouseover', onMapMove)
     })
     function onMapMove(e) {
-      console.log(e.latlng)
+      console.log(e)
     }
     // 构造显示位置的控件
     function positionControl() {

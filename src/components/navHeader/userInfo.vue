@@ -66,8 +66,6 @@ export default defineComponent({
       })
 
       const clickItem = (item) => {
-
-        console.log(state.treeData)
         state.currentIndex = item.name
       }
       return {...toRefs(state),clickItem,reacLis}

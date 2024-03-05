@@ -68,9 +68,6 @@ export default defineComponent({
       state.isCollapse = value
     }
     function openMenu(widgetName: string) {
-      // 获取子组件实例
-      console.log(childRef.value)
-      console.log(grandChildRef.value)
       travelTree(state.menuData,widgetName)
     }
     function travelTree(tree:any, target:string):any{

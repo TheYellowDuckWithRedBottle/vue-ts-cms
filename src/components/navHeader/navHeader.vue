@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { ref , computed, reactive} from 'vue'
-import { useStore } from 'vuex'
+import { ref , computed, reactive, watch, onMounted} from 'vue'
+import { useStore,mapState  } from 'vuex'
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 export default {
@@ -54,6 +54,20 @@ export default {
         avatar: storeUser.value.avatar
       },
     })
+    onMounted(() => {
+      console.log('storeUser', storeUser)
+      state.user = {
+        username: storeUser.value.username,
+        avatar: storeUser.value.avatar
+      }
+    })
+    watch(() => store.state.user, (newVal, oldVal) => {
+      state.user = {
+        username: newVal.username,
+        avatar: 'data:image/png;base64,'+newVal.avatar
+      }
+      console.log('state.user', state.user)
+    });
     const cropImage = ref(null)
     let cropper = null
     const showAvatarDialog = ref(false)

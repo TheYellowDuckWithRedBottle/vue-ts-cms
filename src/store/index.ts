@@ -13,7 +13,7 @@ const store = createStore({
   },
   mutations: {
     setUser(state, user) {
-      console.log(state, user)
+      console.log('user', user)
       state.user = user
     },
     setUserName(state, username) {

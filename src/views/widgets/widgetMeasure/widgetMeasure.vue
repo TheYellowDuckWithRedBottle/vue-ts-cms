@@ -59,7 +59,6 @@ export default defineComponent({
     })
 
     if(instance !== null) {
-      console.log(instance.appContext.config.globalProperties.$map)
       L = instance.appContext.config.globalProperties.$L
       map = instance.appContext.config.globalProperties.$map
       state.lines = new L.polyline(state.points)
@@ -82,7 +81,6 @@ export default defineComponent({
       if (state.points.length > 1) {
         const currentDistance = map.distance(state.points[state.points.length -2], newPoint)
         state.distance += currentDistance
-        console.log(state.distance)
       }
       state.lines.addLatLng(e.latlng)
       map.addLayer(state.lines)
@@ -119,7 +117,6 @@ export default defineComponent({
     // 导出单个地块
     function exportBlock (resultItem) {
       state.dialogVisible = true
-      console.log(resultItem.geometry.toGeoJSON())
       state.exportData = resultItem.geometry.toGeoJSON()
     }
     // 改变鼠标样式
