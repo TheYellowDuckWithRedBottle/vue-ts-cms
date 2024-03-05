@@ -122,7 +122,6 @@ export default defineComponent({
       }
       axios.post(url, data).then(res => {
         state.showDeleteServiceDialog = false
-        console.log(res)
       }).catch(err => {
         state.showDeleteServiceDialog = false
       })

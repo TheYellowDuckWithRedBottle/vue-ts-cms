@@ -35,14 +35,10 @@ export default defineComponent({
     let instance = getCurrentInstance()
     let L = {}
     let map = {}
-    // watch (L,(newValue, oldValue) => {
-    //   console.log(newValue, oldValue)
-    // })
     onMounted(() => {
       if(instance !== null) {
       L = instance.appContext.config.globalProperties.$L
       map = instance.appContext.config.globalProperties.$map
-      console.log(L,map)
       }
     })
 
@@ -110,7 +106,6 @@ export default defineComponent({
         wmsLayer.bringToFront();
       } else {
         map.eachLayer(function(layer) {
-          console.log(layer)
           if(layer.options && layer.options.layers === data.alias) {
             map.removeLayer(layer)
           }

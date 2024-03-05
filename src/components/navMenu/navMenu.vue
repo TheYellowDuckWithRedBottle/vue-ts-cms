@@ -76,7 +76,6 @@ export default defineComponent({
     userMenu.forEach((item) => {
       item.showChild = false
     })
-    console.log(userMenu)
     const handleOpen = () => {
       console.log('open')
     }

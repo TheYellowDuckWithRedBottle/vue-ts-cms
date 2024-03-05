@@ -135,13 +135,16 @@ export default defineComponent({
       getAllMapTemplates()
     })
     async function getAllMapTemplates() {
-      const res = await getMapTemplates()
-      console.log(res)
-      state.mapTemplates = res.data
+      try {
+        const res = await getMapTemplates()
+        state.mapTemplates = res.data
+      } catch (error) {
+        router.push({ path: `/login` })
+      }
+      
     }
     function previewMap(mapTemplateInfo: any) {
       const mapTemplateId = mapTemplateInfo.id
-      console.log(mapTemplateInfo)
       router.push({ path: `/main` })
 
     }

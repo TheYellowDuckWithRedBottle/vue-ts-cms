@@ -26,7 +26,6 @@ export default defineComponent({
     })
     function analysis() {
       console.log(commonAnalysis.value)
-      console.log('analysis')
     }
     return {
       commonAnalysis,

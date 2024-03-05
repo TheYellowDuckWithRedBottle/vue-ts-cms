@@ -18,7 +18,6 @@ function MyRef<T>(value: T) {
       set(newVal) {
         clearTimeout(timer)
         timer = setTimeout(() => {
-          console.log('出发了')
           value = newVal
           timer = null
           trigger()
@@ -56,7 +55,6 @@ const changeName = function () {
   isChange2.value = { name: '王' }
   isChange3.value = 'nice'
   isChange3.value = 'good'
-  console.log(isChange2)
 }
 // return {
 //   isChange,

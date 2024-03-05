@@ -172,13 +172,11 @@ export default defineComponent({
     }
     function switchPanel () {
       showEditor.value = !showEditor.value
-      console.log(showEditor.value)
     }
     function switchCityPanel () {
       showCityLocation.value = !showCityLocation.value
     }
     function handleClick (tab) {
-      console.log(tab)
       state.activeName = tab.props.name
     }
     function changeGeojson (data) {

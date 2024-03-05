@@ -59,12 +59,10 @@ export default defineComponent({
     }
     function route2Map (mapTemplate: any) {
       //  todo 带上id过去
-      console.log(mapTemplate)
       const mapTemplateId = mapTemplate.id
       router.push({ path: `/main` })
     }
     function configMapFunction (mapTemplate: any) {
-      console.log(mapTemplate)
       emit('configMapFunction',mapTemplate)
     }
     return { deleteTemplate, route2Map, configMapFunction }
