@@ -36,14 +36,13 @@ export async function getUserMenu (username: string) {
 }
 export async function updateUserAvatar(username: string ,avatar: string){
   const user = {
-    id: 'string',
     username: username,
     email: '',
     phone: '',
     role: '',
     avatar: avatar
   }
-  return (await axiosInstance.post('/user/updateUserAvatar', user)).data
+  return (await axiosInstance.post('/User/updateUserAvatar', user)).data
 }
 // 地图模板
 export async function getMapTemplates() {

@@ -20,11 +20,13 @@
         <span class="username">{{ user.username }}</span>
       </div>
     </div>
-    <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog = false">
-      <div  class="avatar-dialog" >
+    <div class="user-avatar-dialog" v-if="showAvatarDialog" @click="showAvatarDialog=false">
+      <div  class="avatar-dialog" @click.stop="clickAvatar">
         <div class="avatar-header">裁剪头像 </div>
         <div class="avatar-body">
-          <img :src="user.avatar" alt="">
+          <div class="crop-box-container" style="width: 100%;height:100%;position:relative">
+            <img :src="user.avatar" id="avatarImage" ref="cropImage"  alt="">
+          </div>
         </div>
         <div class="avatar-footer">
           <button class="avatar-btn" @click = "setNewAvatar">设置新头像</button>
@@ -34,12 +36,13 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { ref , computed, reactive} from 'vue'
 import { useStore } from 'vuex'
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 export default {
   components: {
-    // testCom
   },
   setup() {
     const store = useStore()
@@ -50,10 +53,12 @@ export default {
       user: {
         username: storeUser.value.username,
         avatar: storeUser.value.avatar
-      }
+      },
     })
+    const cropImage = ref(null)
+    let cropper = null
     const showAvatarDialog = ref(false)
-    function changeUserAvatar (value:any) {
+    function changeUserAvatar (value) {
       //1.打开form对话框，选择图片
       showAvatarDialog.value = true
       // 2.将图片转换为base64
@@ -63,20 +68,51 @@ export default {
       try {
         reader.onload = function (e) {
           state.user.avatar = e.target?.result
+          const image = document.getElementById('avatarImage')
+          image.src = e.target?.result
+          cropper = new Cropper(image, {
+            viewMode:3,
+            dragMode: 'move',
+            aspectRatio: 1/1,
+            initialAspectRatio: 1,
+            autoCrop: 0.6,
+            movable: true,
+            rotatable: true
+          });
         }
       } catch (error) {
         console.log('error', error)
       }
     }
     function setNewAvatar () {
-      store.dispatch('setUserAvatar', state.user)
-      showAvatarDialog.value = false
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        const user = {
+          username: state.user.username,
+          avatar: ''
+        }
+        const reader = new FileReader();
+        // 监听读取完成事件
+        reader.onloadend = function() {
+          // 获取Base64字符串（去掉前缀）
+          const base64String = reader.result.split(',')[1];
+          console.log(base64String);
+          user.avatar = base64String
+          store.dispatch('setUserAvatar', user)
+          showAvatarDialog.value = false
+        };
+        reader.readAsDataURL(blob)
+      })
+    }
+    function clickAvatar () {
+      showAvatarDialog.value = true
     }
     return {
       ...state,
       showAvatarDialog,
+      cropImage,
       changeUserAvatar,
-      setNewAvatar
+      setNewAvatar,
+      clickAvatar,
     }
   }
 }
@@ -129,6 +165,55 @@ export default {
         height: calc(100% - 115px);
         padding: 16px;
         overflow: hidden;
+        .crop-box-container {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          .crop-box {
+            position: absolute;
+            overflow: hidden;
+            top:0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+
+            .crop-box-inner {
+              position: absolute;
+              padding: 4px;
+            }
+            .crop-box-inner::before{
+              position: absolute;
+              display: block;
+              padding: 4px;
+              border-radius: 50%;
+              transform: translate(-50%, -50%);
+              content: '';
+              background: #fff;
+              border: 1px solid #767676;
+            }
+            .nw {
+              top: 0;
+              left: 0;
+              cursor:nw-resize;
+            }
+            .ne {
+              top:0;
+              right: 0;
+              cursor:ne-resize;
+            }
+            .sw {
+              bottom: 0;
+              left: 0;
+              cursor:sw-resize;
+            }
+            .se {
+              bottom: 0;
+              right: 0;
+              cursor:se-resize;
+            }
+          }
+        }
       }
       .avatar-footer {
         box-sizing: border-box;
@@ -142,7 +227,7 @@ export default {
         .avatar-btn {
           display: inline-block;
           color: var(--background-white);
-          border: 1px solid #fff; 
+          border: 1px solid #fff;
           border-radius: var(--borderRadius-medium);
           background-color: var(--color-primary);
           width: 100%;
